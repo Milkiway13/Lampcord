@@ -6,11 +6,6 @@ import java.util.TimerTask
 
 private var registered = false
 
-/**
- * Polls AWT window focus. Neither java.awt.event nor KeyboardFocusManager's focus API is exposed
- * on this compile classpath, so a 500ms poll of Window.getWindows() is used instead. The latency
- * is irrelevant for deciding whether a message counts as read.
- */
 internal actual fun registerVisibilityListener(onVisible: () -> Unit, onHidden: () -> Unit) {
     if (registered) return
     registered = true

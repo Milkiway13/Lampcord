@@ -94,11 +94,11 @@ enum class ServerSettingsSection(val title: String, val icon: ImageVector, val s
     EMOJI("Emoji", Icons.Rounded.Mood, Icons.Filled.Mood),
     STICKERS("Stickers", Icons.Rounded.StickyNote2, Icons.Filled.StickyNote2),
     CHANNELS("Channels", Icons.Rounded.Tag, Icons.Filled.Tag),
-    
+
     AUDIT_LOG("Audit Log", Icons.Rounded.Article, Icons.Filled.Article, "Moderation"),
-    
+
     ENABLE_COMMUNITY("Enable Community", Icons.Rounded.Home, Icons.Filled.Home, "Community"),
-    
+
     MEMBERS("Members", Icons.Rounded.Group, Icons.Filled.Group, "User Management"),
     INVITES("Invites", Icons.Rounded.Link, Icons.Filled.Link, "User Management"),
     BANS("Bans", Icons.Rounded.Block, Icons.Filled.Block, "User Management"),
@@ -128,7 +128,7 @@ fun ServerSettings(
     val member = remember(guild.id, currentUser) {
         currentUser?.id?.let { userStore.getMember(guild.id, it) }
     }
-    
+
     val allowedSections = remember(guild.id, member) {
         val currentUserVal = currentUser
         ServerSettingsSection.entries.filter { section ->
@@ -249,9 +249,9 @@ fun ServerSettings(
                     selectedCategory = selectedCategory,
                     selectedRole = selectedRole,
                     onDismiss = onDismiss,
-                    onCategorySelected = { 
+                    onCategorySelected = {
                         selectedCategory = it
-                        selectedRole = null 
+                        selectedRole = null
                     },
                     onRoleSelected = { selectedRole = it }
                 )
@@ -330,7 +330,7 @@ fun ServerSettingsDesktopOverlay(
                             }
 
                             ExtendedFloatingActionButton(
-                                onClick = { /* Placeholder */ },
+                                onClick = {  },
                                 expanded = isExpanded,
                                 icon = {
                                     val iconUrl = guild.icon?.let { "https://cdn.discordapp.com/icons/${guild.id}/$it.png?size=64" }
@@ -355,7 +355,7 @@ fun ServerSettingsDesktopOverlay(
                 ) {
                     allowedSections.forEach { section ->
                         val isSelected = currentSection == section
-                        
+
                         WideNavigationRailItem(
                             selected = isSelected,
                             railExpanded = railState.currentValue == WideNavigationRailValue.Expanded,
@@ -433,11 +433,11 @@ private fun ServerSettingsContent(
         ServerSettingsSection.EMOJI -> ServerEmoji(guild)
         ServerSettingsSection.STICKERS -> ServerStickers(guild)
         ServerSettingsSection.CHANNELS -> ServerChannels(guild)
-        
+
         ServerSettingsSection.AUDIT_LOG -> ServerAuditLog(guild)
-        
+
         ServerSettingsSection.ENABLE_COMMUNITY -> Text("Community features coming soon", color = MaterialTheme.colorScheme.onSurfaceVariant)
-        
+
         ServerSettingsSection.MEMBERS -> ServerMembers(guild)
         ServerSettingsSection.INVITES -> ServerInvites(guild)
         ServerSettingsSection.BANS -> ServerBans(guild)

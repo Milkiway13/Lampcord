@@ -143,10 +143,10 @@ fun LoginScreen(
                     val currentTicket: String? = mfaTicket
                     if (currentTicket != null) {
                         val res = sessionManager.verifyMFA(mfaCode.trim(), currentTicket, mfaType)
-                        if (res) {
+                        if (res?.token != null) {
                             onLoginSuccess()
                         } else {
-                            errorMessage = invalidMfaError
+                            errorMessage = res?.message ?: invalidMfaError
                         }
                     }
                 }

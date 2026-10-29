@@ -81,10 +81,6 @@ private fun String.toThemeColor(): Color? {
     return if (hex.length == 6) Color(value or 0xFF000000) else Color(value)
 }
 
-/**
- * Caelestia derives its palette from the wallpaper and keeps the active scheme in
- * `~/.local/state/caelestia/scheme.json`, which is rewritten whenever the wallpaper changes.
- */
 private class CaelestiaScheme(val palette: MatugenPalette, val isDark: Boolean)
 
 private fun readCaelestiaScheme(stateDir: File): CaelestiaScheme? {
@@ -166,11 +162,6 @@ private class ThemeSources(
     val matugenSeed: Color? = null
 )
 
-/**
- * Watches the directories holding the palette sources and fires when one of [watchedNames]
- * is created, modified or removed. Used instead of polling so theme changes are picked up
- * as soon as the shell writes them.
- */
 private fun watchThemeFiles(
     dirs: List<File>,
     watchedNames: Set<String>,
@@ -195,7 +186,7 @@ private fun watchThemeFiles(
     return Thread({
         try {
             while (!Thread.currentThread().isInterrupted) {
-                // The timeout only bounds the blocking wait so the thread can notice interruption.
+
                 val key = watchService.poll(30, TimeUnit.SECONDS) ?: continue
                 var changed = false
                 for (event in key.pollEvents()) {
@@ -276,15 +267,10 @@ actual fun rememberDynamicSeedColor(): Color? {
 
     val sources = rememberThemeSources(enabled = true)
 
-    // Caelestia already derives a full palette from the wallpaper, so it is the best source.
     sources.caelestiaSeed?.let { return it }
 
-    // Next best: the OS accent, which Nucleus observes natively and pushes as a change
-    // notification, so it recomposes without any polling. Null when unavailable (e.g. a
-    // Wayland session without a Settings portal, which is the common Linux case).
     systemAccentColor()?.let { return it }
 
-    // Last resort: a wallpaper-generated palette file, kept live by a file watcher.
     return sources.matugenSeed
 }
 
@@ -301,8 +287,6 @@ actual fun rememberPlatformColorScheme(
 ): ColorScheme {
     val sources = rememberThemeSources(enabled = useMaterialYou)
 
-    // Prefer an exact match with the shell palette when its mode matches the app's.
-    // A full palette carries every role, so it beats deriving one from a single seed.
     sources.caelestia
         ?.takeIf { it.isDark == isDark }
         ?.palette

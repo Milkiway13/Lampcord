@@ -36,13 +36,6 @@ private data class Verification(
     val onConfirm: suspend (String) -> Unit
 )
 
-/**
- * Drives the device list and the escalation Discord asks for when signing a session out: a
- * password, then an authenticator code or a backup code.
- *
- * Each step hands the collected credential straight to the next request rather than storing it,
- * so a cancelled dialog leaves nothing behind.
- */
 private class DevicesController(
     private val api: SessionApi,
     private val scope: CoroutineScope

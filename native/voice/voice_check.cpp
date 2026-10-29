@@ -1,4 +1,3 @@
-// A small executable check of the production DAVE state, with Discord's test external sender.
 #include "external_sender.h"
 #include "voice.cpp"
 #include <cmath>
@@ -61,14 +60,14 @@ int main() {
             check(decryptor->Decrypt(dave::Audio, {encrypted.data(), encrypted.size()}, {plain.data(), plain.size()}, &length) == dave::IDecryptor::Success);
             plain.resize(length); check(plain == opus);
             check(opus_decode(recipient.peers.at(alice.user).decoder.get(), plain.data(), static_cast<opus_int32>(plain.size()), pcm.data(), 960, 0) == 960);
-            // Replays and cleartext audio must not be accepted as DAVE frames.
+
             check(decryptor->Decrypt(dave::Audio, {encrypted.data(), encrypted.size()}, {plain.data(), plain.size()}, &length) != dave::IDecryptor::Success);
             check(decryptor->Decrypt(dave::Audio, {opus.data(), opus.size()}, {plain.data(), plain.size()}, &length) != dave::IDecryptor::Success);
         };
         exchange(bob);
         add(carol, 1, 7);
         check(!carol.ready);
-        exchange(bob); // Previous sender epoch remains usable until Execute Transition.
+        exchange(bob);
         alice.execute(7); bob.execute(7); carol.execute(7);
         exchange(bob); exchange(carol);
         check(alice.session->GetLastEpochAuthenticator() == carol.session->GetLastEpochAuthenticator());

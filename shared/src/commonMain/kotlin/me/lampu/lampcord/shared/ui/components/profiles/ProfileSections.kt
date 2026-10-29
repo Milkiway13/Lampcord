@@ -100,10 +100,10 @@ fun ProfileSections(
     }
 
     Column(modifier = Modifier.padding(bottom = 12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        val bio = (guildMeta?.bio?.takeIf { it.isNotBlank() } 
-            ?: userMeta?.bio?.takeIf { it.isNotBlank() } 
+        val bio = (guildMeta?.bio?.takeIf { it.isNotBlank() }
+            ?: userMeta?.bio?.takeIf { it.isNotBlank() }
             ?: user.bio?.takeIf { it.isNotBlank() })?.let { Profile3y3.strip(it) }
-            
+
         if (!bio.isNullOrBlank()) {
             Column {
                 ProfileSectionHeader("About Me", color = profileTextColor)
@@ -294,7 +294,6 @@ private fun RoleBadge(role: me.lampu.lampcord.shared.model.Role) {
         } else null
     }
 
-    // Avoid a frame-driven transition for the static Windows profile view.
     val animateGradient = !Settings.shared.reduceMotion &&
         getPlatformName() != "windows" && roleColors != null && roleColors.size > 1
     val animValue = if (animateGradient) {
@@ -324,7 +323,7 @@ private fun RoleBadge(role: me.lampu.lampcord.shared.model.Role) {
         ) {
             val pInt = role.colors?.primary_color ?: role.color
             val baseColor = if (pInt != 0) Color(pInt or -0x1000000) else MaterialTheme.colorScheme.primary
-            
+
             val brush = remember(roleColors, animValue) {
                 val rc = roleColors
                 if (rc != null && rc.size > 1) {
@@ -333,7 +332,7 @@ private fun RoleBadge(role: me.lampu.lampcord.shared.model.Role) {
                         rc.size == 2 -> listOf(rc[0], rc[1], rc[0])
                         else -> rc
                     }
-                    
+
                     val offset = animValue * 100f
                     Brush.linearGradient(
                         colors = animatedColors,

@@ -261,7 +261,7 @@ val platform = remember { me.lampu.lampcord.shared.utils.getPlatformName() }
     }
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    
+
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = MaterialTheme.colorScheme.surface,
@@ -293,8 +293,7 @@ val platform = remember { me.lampu.lampcord.shared.utils.getPlatformName() }
                             .verticalScroll(scrollState)
                     } else Modifier
                 )
-                // contentWindowInsets is zero so the page draws edge to edge; pad inside the scroll instead so the
-                // last setting can scroll clear of the system navigation bar.
+
                 .navigationBarsPadding()
                 .padding(vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),

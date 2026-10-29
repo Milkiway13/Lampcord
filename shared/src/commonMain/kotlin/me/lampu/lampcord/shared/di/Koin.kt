@@ -45,7 +45,7 @@ val coreModule = module {
     single {
         CoroutineScope(
             SupervisorJob() +
-                Dispatchers.Main +
+                Dispatchers.Default +
                 CoroutineExceptionHandler { _, throwable ->
                     Logging.e("SharedScope", "Uncaught exception in shared coroutine scope", throwable)
                 }

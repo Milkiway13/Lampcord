@@ -61,7 +61,7 @@ fun DebugLogScreen(onBack: () -> Unit) {
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* Redundant with StateFlow but kept for UI */ }) {
+                    IconButton(onClick = {  }) {
                         Icon(Icons.Rounded.Refresh, "Refresh")
                     }
                     IconButton(onClick = { Logging.clear() }) {
@@ -88,7 +88,7 @@ fun DebugLogScreen(onBack: () -> Unit) {
                         { IconButton(onClick = { searchQuery = "" }) { Icon(Icons.Rounded.Close, null) } }
                     } else null
                 )
-                
+
                 FilterChip(
                     selected = autoScroll,
                     onClick = { autoScroll = !autoScroll },
@@ -180,7 +180,7 @@ fun DebugLogScreen(onBack: () -> Unit) {
 @Composable
 fun LogEntryItem(entry: Logging.LogEntry) {
     var expanded by remember { mutableStateOf(false) }
-    
+
     val color = when (entry.level) {
         "D" -> Color.Gray
         "I" -> Color(0xFF2196F3)
@@ -223,9 +223,9 @@ fun LogEntryItem(entry: Logging.LogEntry) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
             )
         }
-        
+
         Spacer(Modifier.height(4.dp))
-        
+
         Text(
             text = entry.message,
             style = MaterialTheme.typography.bodySmall,

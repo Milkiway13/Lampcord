@@ -27,7 +27,7 @@ fun CropImageDialog(
 ) {
     var scale by remember { mutableFloatStateOf(1f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
-    
+
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false)
@@ -66,12 +66,11 @@ fun CropImageDialog(
                     val strokeWidth = 2.dp.toPx()
                     val radius = size.minDimension / 3
                     val center = Offset(size.width / 2, size.height / 2)
-                    
+
                     drawRect(Color.Black.copy(alpha = 0.5f))
-                    
-                    // Clear crop area (This is simplified, real clear requires blend modes)
+
                 }
-                
+
                 Box(
                     modifier = Modifier
                         .size(250.dp)
@@ -92,8 +91,8 @@ fun CropImageDialog(
                     TextButton(onClick = onDismiss) {
                         Text("Cancel", color = Color.White)
                     }
-                    Button(onClick = { 
-                        onConfirm(imageBytes) 
+                    Button(onClick = {
+                        onConfirm(imageBytes)
                     }) {
                         Text("Apply")
                     }

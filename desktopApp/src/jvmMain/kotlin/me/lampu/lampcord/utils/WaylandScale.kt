@@ -32,7 +32,6 @@ object WaylandScale {
             System.getProperty("lampcord.forceScale")?.toFloatOrNull()
                 ?: System.getenv("LAMPCORD_FORCE_SCALE")?.toFloatOrNull()
 
-        // Wakefield (Native Wayland) support - Experimental
         val useWakefield =
             System.getProperty("lampcord.useWakefield") == "true" || System.getenv("LAMPCORD_USE_WAKEFIELD") == "1"
         if (useWakefield) {
@@ -44,7 +43,6 @@ object WaylandScale {
             return
         }
 
-        // Standard Wayland/XWayland fix
         if (forceScale == null) {
             System.setProperty("sun.java2d.uiScale", "1")
         } else {
@@ -72,7 +70,6 @@ object WaylandScale {
         }
         log("Applied Wayland scale: $scale")
 
-        // Keep monitor discovery off the AWT event thread.
         startMonitorWatcher()
     }
 

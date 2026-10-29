@@ -72,7 +72,7 @@ class DiscordInputVisualTransformation(val primaryColor: Color) : VisualTransfor
     override fun filter(text: AnnotatedString): TransformedText {
         val build = AnnotatedString.Builder()
         val rawText = text.text
-        
+
         var i = 0
         while (i < rawText.length) {
             val char = rawText[i]
@@ -108,7 +108,7 @@ class DiscordInputVisualTransformation(val primaryColor: Color) : VisualTransfor
             build.append(char)
             i++
         }
-        
+
         return TransformedText(build.toAnnotatedString(), OffsetMapping.Identity)
     }
 }
@@ -128,15 +128,15 @@ fun ChatInputBar(
     settingsStore: SettingsStore = koinInject(),
     profileStore: ProfileStore = koinInject()
 ) {
-    var textFieldValue by remember(channel.id) { 
+    var textFieldValue by remember(channel.id) {
         val draft = messageStore.draftMessages[channel.id] ?: ""
-        mutableStateOf(TextFieldValue(draft, TextRange(draft.length))) 
+        mutableStateOf(TextFieldValue(draft, TextRange(draft.length)))
     }
-    
+
     val haptic = LocalHapticFeedback.current
 
     var mentionRanges by remember(channel.id) { mutableStateOf<Map<IntRange, String>>(emptyMap()) }
-    
+
     var isFocused by remember { mutableStateOf(false) }
     var showFilePicker by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
@@ -154,8 +154,8 @@ fun ChatInputBar(
         val user = currentUser
         if (channel.thread_metadata?.locked == true && (user == null || member == null)) false
         else if (user == null) true
-        else if (guild == null) true // DMs
-        else if (member == null) channel.thread_metadata?.locked != true // Keep normal channels usable while the member loads, but never expose a locked thread input.
+        else if (guild == null) true
+        else if (member == null) channel.thread_metadata?.locked != true
         else me.lampu.lampcord.shared.utils.PermissionHelper.canSendMessages(
             member,
             guild,
@@ -184,9 +184,6 @@ fun ChatInputBar(
         navigationStore.shouldMentionReply &&
         !isSelfOrWebhookReply
 
-    // Discord only emits a reply ping when allowed_mentions is omitted entirely, or when
-    // replied_user is explicitly true. Sending replied_user=true is not enough on its own, so
-    // a ping-on reply omits the key and a ping-off reply suppresses it.
     val allowedMentions = if (replyTarget == null) {
         null
     } else if (replyShouldMention) {
@@ -239,12 +236,12 @@ fun ChatInputBar(
         val members = memberListStore.memberListItems.mapNotNull { it?.member } +
             relationshipStore.relationships.value.mapNotNull { rel -> rel.user?.let { Member(user = it) } }
         val roles = navigationStore.selectedGuild?.roles ?: emptyList()
-        
+
         val guildEmojis = guildStore.guilds.value.flatMap { guild ->
             guild.emojis.map { it.copy(guild_id = guild.id) }
         }
         val allAvailableEmojis = guildEmojis.distinctBy { it.id }
-        
+
         return resolveServerContent(content, mentionRanges, channels, members, roles, allAvailableEmojis, currentUser, guildId)
     }
 
@@ -309,13 +306,7 @@ fun ChatInputBar(
                 inputText = ":${emoji.name}:"
             ))
         } else {
-            // Standard emoji reach this branch with `name` set to the Unicode character, not a
-            // shortcode: EmojiIndex builds the picker grid with `name = entry.surrogates`.
-            // So ":$name:" put ":😀:" in the box, and because getCharForName cannot resolve a
-            // character back to a name, no mention range was registered and that literal text
-            // went to the server. Resolve the character to its shortcode for the box, and keep
-            // mapping the range back to the character so the payload still goes out as a plain
-            // emoji the way it did before.
+
             val char = emoji.name ?: return
             val shortcode = if (isUnicodeEmoji(char)) {
                 EmojiIndex.getNamesForChar(char)?.firstOrNull()
@@ -342,7 +333,7 @@ fun ChatInputBar(
         val isMobileDevice = platform == "android" || platform == "ios"
         val isMobileView = isMobileDevice || maxWidth < 600.dp
         val isDesktopTarget = platform == "desktop" || platform == "macos" || platform == "windows" || platform == "linux"
-        
+
         Column(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 AnimatedVisibility(
@@ -400,7 +391,7 @@ fun ChatInputBar(
                             val isEditing = messageStore.editingMessage != null
                             val activeMsg = messageStore.editingMessage ?: messageStore.replyingTo
                             val guildId = activeMsg?.guild_id ?: navigationStore.selectedGuild?.id
-                            
+
                             val roleColor = remember(activeMsg, guildId) {
                                 val guild = guildStore.guilds.value.find { it.id == guildId } ?: return@remember Color.Unspecified
                                 val authorId = activeMsg?.author?.id ?: return@remember Color.Unspecified
@@ -428,12 +419,12 @@ fun ChatInputBar(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     IconButton(
-                                        onClick = { 
+                                        onClick = {
                                             if (isEditing) {
                                                 messageStore.editingMessage = null
                                                 textFieldValue = TextFieldValue("")
                                             } else {
-                                                messageStore.replyingTo = null 
+                                                messageStore.replyingTo = null
                                             }
                                         },
                                         modifier = Modifier.size(24.dp)
@@ -441,9 +432,9 @@ fun ChatInputBar(
                                         Icon(Icons.Filled.Close, null, modifier = Modifier.size(16.dp))
                                     }
                                 }
-                                
+
                                 Spacer(modifier = Modifier.width(4.dp))
-                                
+
                                 val displayName = activeMsg?.author?.global_name ?: activeMsg?.author?.username ?: "Unknown"
                                 val text = if (isEditing) {
                                     AnnotatedString("Editing message")
@@ -470,9 +461,9 @@ fun ChatInputBar(
                                 if (showReplyMentionToggle) {
                                     val mentionOn = navigationStore.shouldMentionReply
                                     TextButton(
-                                        onClick = { 
+                                        onClick = {
                                             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                            navigationStore.shouldMentionReply = !navigationStore.shouldMentionReply 
+                                            navigationStore.shouldMentionReply = !navigationStore.shouldMentionReply
                                         },
                                         contentPadding = PaddingValues(horizontal = 8.dp),
                                         modifier = Modifier.height(32.dp)
@@ -523,7 +514,7 @@ fun ChatInputBar(
                                             } else {
                                                 Text(name, modifier = Modifier.align(Alignment.Center).padding(4.dp), style = MaterialTheme.typography.labelSmall, maxLines = 2, overflow = TextOverflow.Ellipsis)
                                             }
-                                            
+
                                             IconButton(
                                                 onClick = { messageStore.pendingFiles.removeAt(index) },
                                                 modifier = Modifier.align(Alignment.TopEnd).size(24.dp).background(Color.Black.copy(alpha = 0.4f), CircleShape)
@@ -570,7 +561,7 @@ fun ChatInputBar(
                                 showCollapsibleItems &&
                                 canSend &&
                                 getPlatformName() == "android"
-                            
+
                             if (uploadVisible) {
                                 if (getPlatformName() != "android") {
                                     FilePicker(
@@ -601,7 +592,7 @@ fun ChatInputBar(
                                         modifier = Modifier.size(iconSize)
                                     )
                                 }
-                                
+
                                 Spacer(modifier = Modifier.width(4.dp))
                             }
 
@@ -643,7 +634,7 @@ fun ChatInputBar(
 
                             val isDm = channel.type == 1 || channel.type == 3 || channel.guild_id == null
                             val isThread = channel.type == 10 || channel.type == 11 || channel.type == 12
-                            
+
                             val placeholderText = when {
                                 !canSend -> "You do not have permission to send messages."
                                 isThread -> "Reply to thread..."
@@ -694,12 +685,12 @@ fun ChatInputBar(
                                             value = textFieldValue,
                                             enabled = canSend,
                                             readOnly = !canSend,
-                                            onValueChange = { 
+                                            onValueChange = {
                                                 if (canSend) {
                                                     val oldText = textFieldValue.text
                                                     textFieldValue = it
                                                     mentionRanges = shiftMentionRanges(mentionRanges, oldText, it.text)
-                                                
+
 if (it.selection.collapsed) {
                                                         val cursor = it.selection.start
                                                         val textBefore = it.text.take(cursor)
@@ -731,9 +722,7 @@ if (it.selection.collapsed) {
                                                 .pointerInput(navigationStore.isEmojiPickerVisible) {
                                                     if (!navigationStore.isEmojiPickerVisible) return@pointerInput
                                                     awaitEachGesture {
-                                                        // Watch for the press without consuming it: the tap must still
-                                                        // place the cursor, but tapping the input while the emoji panel
-                                                        // is open should dismiss the panel and bring the keyboard back.
+
                                                         awaitFirstDown(requireUnconsumed = false)
                                                         navigationStore.isEmojiPickerVisible = false
                                                         focusRequester.requestFocus()
@@ -916,9 +905,9 @@ if (it.selection.collapsed) {
                                     }
                                 }
                             }
-                            
+
                             val showSend = textFieldValue.text.isNotBlank() || messageStore.pendingFiles.isNotEmpty() || commandStore.activeCommand != null
-                            
+
                             AnimatedVisibility(
                                 visible = showSend,
                                 enter = if (reduceMotion) EnterTransition.None else expandHorizontally(expandFrom = Alignment.Start) + fadeIn() + scaleIn(initialScale = 0.8f),

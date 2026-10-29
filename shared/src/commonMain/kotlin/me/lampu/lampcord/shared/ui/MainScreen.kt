@@ -79,7 +79,7 @@ fun MainScreen(
                     }
                     else -> {
                         LoginScreen(
-                            onLoginSuccess = { /* No-op, navigationStore updates will trigger re-compose */ }
+                            onLoginSuccess = {  }
                         )
                     }
                 }
@@ -119,13 +119,13 @@ fun MainScreen(
                 }
             }
         }
-        
+
         if (navigationStore.isQuickSwitcherVisible) {
             QuickSwitcher(
                 onDismiss = { navigationStore.isQuickSwitcherVisible = false }
             )
         }
-        
+
         navigationStore.forwardingMessage?.let { message ->
             ForwardDialog(
                 message = message,

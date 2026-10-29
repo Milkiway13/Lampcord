@@ -49,11 +49,6 @@ class NavigationStore(
 
     private val lastChannelRefreshMillis = mutableMapOf<String, Long>()
 
-    /**
-     * What the chat view is currently showing, reported by ChatArea. Distinct from
-     * selectedChannel, which persists while the app is backgrounded and must never be used on its
-     * own to decide whether a message was read.
-     */
     val chatInteraction: StateFlow<ChatInteraction?> = _chatInteraction.asStateFlow()
 
     fun setChatInteraction(channelId: String, atBottom: Boolean) {
@@ -68,12 +63,6 @@ class NavigationStore(
         }
     }
 
-    /**
-     * Whether an incoming message may be acknowledged without the user explicitly reading it.
-     *
-     * Discord requires a resolved selected channel, loaded messages, a live InteractionState for
-     * that channel, and isAtBottomIgnoringTouch, all in StoreMessageAck's pending-ack pipeline.
-     */
     fun shouldAutoAcknowledge(channelId: String): Boolean {
         val interaction = _chatInteraction.value ?: return false
         return AppVisibilityStore.isVisibleNow &&
@@ -187,9 +176,9 @@ class NavigationStore(
     fun closeAttachmentViewer() {
         isAttachmentViewerVisible = false
     }
-    
+
     var forwardingMessage by mutableStateOf<me.lampu.lampcord.shared.model.Message?>(null)
-    
+
     var isForumLoading by mutableStateOf(false)
     var shouldMentionReply by mutableStateOf(true)
 
@@ -209,7 +198,7 @@ class NavigationStore(
         isServerSettingsVisible = false
         lastRequestedKey = null
         Settings.shared.clearLastGuild()
-        
+
         scope.launch {
             val channels = if (guildStore.privateChannels.value.isEmpty()) {
                 guildStore.privateChannels.first { it.isNotEmpty() }
@@ -274,9 +263,9 @@ class NavigationStore(
 
     fun selectGuild(guild: Guild, targetChannelId: String? = null, subscribeCallback: (String) -> Unit) {
         if (selectedGuild?.id == guild.id && !isChannelsAndRolesVisible) return
-        
+
         guildLoadingJob?.cancel()
-        
+
         selectedGuild = guild
         isChannelsAndRolesVisible = false
         isServerSettingsVisible = false
@@ -314,7 +303,7 @@ class NavigationStore(
                 val filtered = guildChannels.filter { it.type in listOf(0, 1, 2, 3, 4, 5, 13, 15, 16) }.sortedBy { it.position }
                 filtered.forEach { guildStore.handleChannelCreateOrUpdate(it.copy(guild_id = guild.id)) }
             }
-            
+
             val finalChannelToSelect = if (targetChannelId != null) {
                 guildStore.allGuildChannels.value.values.find { it.guild_id == guild.id && it.id == targetChannelId }
                     ?: guildStore.allGuildChannels.value.values.find { it.guild_id == guild.id && it.type in listOf(0, 2, 5, 13, 15) }
@@ -323,16 +312,16 @@ class NavigationStore(
                 guildStore.allGuildChannels.value.values.find { it.guild_id == guild.id && it.id == lastId }
                     ?: guildStore.allGuildChannels.value.values.find { it.guild_id == guild.id && it.type in listOf(0, 2, 5, 13, 15) }
             }
-            
+
             if (finalChannelToSelect != null && finalChannelToSelect.id != selectedChannel?.id) {
                 selectChannel(finalChannelToSelect, explicitlySelected = targetChannelId != null)
             }
-            
+
             selectedGuildOnboarding = null
             if (guild.features?.contains("ONBOARDING") == true) {
                 selectedGuildOnboarding = channelApi.getGuildOnboarding(guild.id)
             }
-            
+
             try {
                 val index = guildApi.getCommandIndex(guild.id)
                 commandStore.clear()
@@ -348,15 +337,12 @@ class NavigationStore(
         val hasMessages = messageStore.hasMessages(channel.id)
 
         if (sameChannel && selectedThread == null && hasMessages) {
-            // Already loaded, but an explicit pick (e.g. Message from the friends list) must still bring the
-            // chat to the front instead of silently doing nothing.
+
             if (explicitlySelected) {
                 isFriendsSelected = false
                 notifier?.dismissChannelNotifications(channel.id)
                 triggerFocusChat()
-                // While the app was backgrounded this channel stayed selected, so messages sent from
-                // another client never came through the gateway and the open chat looked out of date.
-                // Pull the latest page so an explicit re-open (notification tap, DM pick) catches up.
+
                 refreshChannelMessages(channel)
             }
             return
@@ -402,15 +388,15 @@ class NavigationStore(
                 isForumLoading = true
                 try {
                     val searchThreads = channelApi.searchThreads(channel.id)
-                    searchThreads?.threads?.forEach { 
+                    searchThreads?.threads?.forEach {
                         guildStore.handleChannelCreateOrUpdate(it.copy(guild_id = channel.guild_id))
                     }
-                    
+
                     val activeThreads = channelApi.getActiveThreads(channel.id)
-                    activeThreads?.threads?.forEach { 
+                    activeThreads?.threads?.forEach {
                         guildStore.handleChannelCreateOrUpdate(it.copy(guild_id = channel.guild_id))
                     }
-                    
+
                     val archivedThreads = channelApi.getArchivedPublicThreads(channel.id, 50)
                     archivedThreads?.threads?.forEach {
                         guildStore.handleChannelCreateOrUpdate(it.copy(guild_id = channel.guild_id))
@@ -422,7 +408,7 @@ class NavigationStore(
                 }
             } else {
                 val channelMessages = messageApi.getChannelMessages(channel.id)
-                channelMessages.forEach { msg -> 
+                channelMessages.forEach { msg ->
                     msg.author?.let { author ->
                         msg.member?.let { m -> userStore.cacheMember(channel.guild_id ?: selectedGuild?.id ?: "", author.id, m) }
                     }
@@ -433,7 +419,6 @@ class NavigationStore(
         }
     }
 
-    /** Refetches the newest page for an already-open channel. */
     private fun refreshChannelMessages(channel: Channel) {
         val now = Clock.System.now().toEpochMilliseconds()
         if (now - (lastChannelRefreshMillis[channel.id] ?: 0L) < 5_000L) return
@@ -481,7 +466,7 @@ class NavigationStore(
         messageStore.loadLoggedMessages(channel.id)
         scope.launch {
             val channelMessages = messageApi.getChannelMessages(channel.id)
-            channelMessages.forEach { msg -> 
+            channelMessages.forEach { msg ->
                 msg.author?.let { author ->
                     msg.member?.let { m -> userStore.cacheMember(channel.guild_id ?: selectedGuild?.id ?: "", author.id, m) }
                 }

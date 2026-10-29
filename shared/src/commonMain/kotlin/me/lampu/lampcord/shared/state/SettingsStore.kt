@@ -330,20 +330,6 @@ class SettingsStore(
             if (!value) silentTyping = false
         }
 
-    private var _enableSystemWindowFrame by mutableStateOf(me.lampu.lampcord.shared.settings.Settings.shared.enableSystemWindowFrame)
-    var enableSystemWindowFrame: Boolean
-        get() = _enableSystemWindowFrame
-        set(value) {
-            _enableSystemWindowFrame = value
-            me.lampu.lampcord.shared.settings.Settings.shared.enableSystemWindowFrame = value
-        }
-
-    var useCustomTitlebar: Boolean
-        get() = !enableSystemWindowFrame
-        set(value) {
-            enableSystemWindowFrame = !value
-        }
-
     private var _enableWaylandScaling by mutableStateOf(me.lampu.lampcord.shared.settings.Settings.shared.enableWaylandScaling)
     var enableWaylandScaling: Boolean
         get() = _enableWaylandScaling

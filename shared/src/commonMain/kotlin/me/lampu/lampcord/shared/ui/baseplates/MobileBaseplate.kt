@@ -82,23 +82,23 @@ fun MobileBaseplate(
     var showCustomStatusDialog by remember { mutableStateOf(false) }
     var showAddAccountDialog by remember { mutableStateOf(false) }
 
-    val initialStartRoute = remember { 
+    val initialStartRoute = remember {
         if (navigationStore.isFriendsSelected) Screen.Friends else Screen.Chat
     }
-    val topLevelRoutes = remember { 
+    val topLevelRoutes = remember {
         setOf(
             Screen.Chat,
-            Screen.Friends, 
+            Screen.Friends,
             Screen.Mentions,
             Screen.Search,
             Screen.GlobalSearch,
-            Screen.Settings, 
-            Screen.ServerSettings, 
+            Screen.Settings,
+            Screen.ServerSettings,
             Screen.ChannelSettings,
             Screen.Pins,
             Screen.ChannelsAndRoles,
             Screen.EasterEgg
-        ) 
+        )
     }
     val navigationState = rememberNavigationState(
         startRoute = initialStartRoute,
@@ -186,7 +186,7 @@ fun MobileBaseplate(
 
     LaunchedEffect(navigationState.topLevelRoute) {
         val route = navigationState.topLevelRoute
-        
+
         if (route == Screen.Chat) {
             panelState.currentValue = lastPanelValue
         } else {
@@ -498,10 +498,10 @@ fun MobileBaseplate(
             val isOverlapping = Settings.shared.panelType == PanelType.OVERLAPPING
             val progress = panelState.progress
             val absProgress = kotlin.math.abs(progress).coerceIn(0f, 1f)
-            
-            if (progress > 0) { // Sliding to Sidebar (Start)
+
+            if (progress > 0) {
                 androidx.compose.ui.graphics.lerp(chatBackground, lightPanelColor, absProgress)
-            } else if (progress < 0) { // Sliding to Member List (End)
+            } else if (progress < 0) {
                 if (isOverlapping) {
                     androidx.compose.ui.graphics.lerp(chatBackground, memberHeaderColor, absProgress)
                 } else {
@@ -529,7 +529,7 @@ fun MobileBaseplate(
                 .statusBarsPadding(),
             swipeToStartEnabled = isChat && !navigationStore.isBubble,
             swipeToEndEnabled = isChat && !navigationStore.isBubble && !Settings.shared.swipeToReplyEnabled,
-            startPanel = { 
+            startPanel = {
                 if (isChat) {
                     val currentBottomPadding = (navBarHeight * navBarVisibleAmount).coerceAtLeast(0.dp)
                     Box(Modifier.fillMaxSize().padding(bottom = currentBottomPadding)) {
@@ -603,10 +603,10 @@ fun MobileBaseplate(
         )
 
         val navItems = remember(settingsStore.navTabsOrderJson, settingsStore.showNavHome, settingsStore.showNavFriends, settingsStore.showNavSearch, settingsStore.showNavMentions, settingsStore.showNavSettings) {
-            val order = runCatching { 
+            val order = runCatching {
                 settingsStore.navTabsOrderJson.removeSurrounding("[", "]").split(",").map { it.trim().removeSurrounding("\"") }
             }.getOrDefault(listOf("home", "friends", "search", "mentions", "settings"))
-            
+
             val items = order.mapNotNull { key ->
                 when (key) {
                     "home" -> if (settingsStore.showNavHome) Screen.Chat else null
@@ -617,7 +617,7 @@ fun MobileBaseplate(
                     else -> null
                 }
             }
-            
+
             if (items.isEmpty()) listOf(Screen.EasterEgg) else items
         }
 

@@ -67,8 +67,7 @@ fun UpdatesContent(
 ) {
     val state by updateManager.state.collectAsState()
     val scope = rememberCoroutineScope()
-    // A build ships as exactly one application id, so it only ever updates from its own
-    // channel; there is no in-place channel switch to offer.
+
     val channel = if (NIGHTLY_BUILD > 0) UpdateChannel.NIGHTLY else UpdateChannel.STABLE
     var showChangelog by remember { mutableStateOf(false) }
     var installNote by remember { mutableStateOf<String?>(null) }

@@ -72,11 +72,9 @@ fun SystemMessage(
                     tint = iconTint
                 )
             }
-            
+
             Spacer(modifier = Modifier.width(12.dp))
 
-            // One text flow rather than separate Texts in a FlowRow: the pieces used to wrap independently, which
-            // dropped the space between the greeting and the name and left a stray leading space on the next line.
             val (prefix, suffix) = remember(message.id) {
                 val templates = listOf(
                     "Welcome, " to ". We hope you brought pizza.",
@@ -104,15 +102,15 @@ fun SystemMessage(
             Text(
                 text = joinText,
                 style = MaterialTheme.typography.bodyMedium,
-                // Softer than the name so the person who joined is what stands out in a long welcome channel.
+
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
                     .weight(1f)
                     .onGloballyPositioned { profilePosition = it.positionInRoot() }
             )
-            
+
             Spacer(modifier = Modifier.width(8.dp))
-            
+
             MessageTimestamp(
                 timestamp = message.timestamp,
                 style = MaterialTheme.typography.labelSmall,
@@ -127,18 +125,18 @@ fun SystemMessage(
                     tint = iconTint
                 )
             }
-            
+
             Spacer(modifier = Modifier.width(12.dp))
-            
+
             Text(
                 text = text,
                 modifier = Modifier.weight(1f),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            
+
             Spacer(modifier = Modifier.width(8.dp))
-            
+
             MessageTimestamp(
                 timestamp = message.timestamp,
                 style = MaterialTheme.typography.labelSmall,

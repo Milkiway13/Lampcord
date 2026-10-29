@@ -141,9 +141,8 @@ fun MessageItem(
     var showCreateThreadDialog by remember { mutableStateOf(false) }
     var showMessageContextMenu by remember { mutableStateOf(false) }
     var messageLongPressRequest by remember { mutableStateOf(0) }
-    
+
     val currentUser by userStore.currentUser.collectAsState()
-    val members by userStore.members.collectAsState()
     val userSettings = settingsStore.userSettings
     val scope = rememberCoroutineScope()
 
@@ -157,10 +156,10 @@ fun MessageItem(
         if (authorId == currentUser?.id) currentUser ?: message.author else message.author
     }
 
-    val member = remember(message.member, authorId, members, guildId) {
-        val cached = if (guildId != null && authorId != null) members[guildId]?.get(authorId) else null
-        message.member ?: cached
+    val memberState = remember(guildId, authorId) {
+        if (guildId != null && authorId != null) userStore.memberState(guildId, authorId) else null
     }
+    val member = message.member ?: memberState?.value
 
     LaunchedEffect(authorId, guildId) {
         if (authorId != null && guildId != null && message.member == null) {
@@ -176,10 +175,8 @@ fun MessageItem(
         }
     }
 
-    val currentMember = remember(navigationStore.selectedGuild, currentUser, members) {
-        val gId = navigationStore.selectedGuild?.id ?: return@remember null
-        val uId = currentUser?.id ?: return@remember null
-        userStore.getMember(gId, uId)
+    val currentMember = navigationStore.selectedGuild?.id?.let { guildId ->
+        currentUser?.id?.let { userId -> userStore.memberState(guildId, userId).value }
     }
 
     val cAuthor = author
@@ -195,7 +192,6 @@ fun MessageItem(
     val canManageMessages = if (guild == null || currentMember == null) false
         else PermissionHelper.hasPermission(currentMember, guild, channel, Permission.MANAGE_MESSAGES, currentUser?.id)
 
-
     val contextMenuItems = remember(message, currentUser, userSettings, priorMessage, currentMember, canAddReaction, cAuthor) {
         if (message.isPending) {
             return@remember listOf(
@@ -207,17 +203,17 @@ fun MessageItem(
             else PermissionHelper.hasPermission(currentMember, guild, channel, Permission.MANAGE_THREADS, currentUser?.id)
 
         val items = mutableListOf<ContextMenuItem>()
-        
+
         if (isMe) {
             items.add(ContextMenuItem("Edit Message", Icons.Filled.Edit, onClick = { messageStore.editingMessage = message }, group = "Primary"))
         }
 
         items.add(ContextMenuItem("Reply", Icons.Rounded.Reply, onClick = { messageStore.replyingTo = message }, group = "Primary"))
         items.add(ContextMenuItem("Forward", Icons.Filled.Forward, onClick = { navigationStore.forwardingMessage = message }, group = "Primary"))
-        
+
         cAuthor?.let { a ->
-            items.add(ContextMenuItem("Profile", Icons.Filled.AccountCircle, onClick = { 
-                profileStore.showProfile(a.id, guildId) 
+            items.add(ContextMenuItem("Profile", Icons.Filled.AccountCircle, onClick = {
+                profileStore.showProfile(a.id, guildId)
             }, group = "Primary"))
         }
 
@@ -291,7 +287,7 @@ fun MessageItem(
         val currentType = message.type ?: 0
         val nextType = nextMessage.type ?: 0
         if ((currentType != 0 && currentType != 19) || (nextType != 0 && nextType != 19)) return@remember false
-        
+
         try {
             val currentTs = Instant.parse(message.timestamp)
             val nextTs = Instant.parse(nextMessage.timestamp)
@@ -312,7 +308,7 @@ fun MessageItem(
         }
     }
     val isHighlighted = messageStore.highlightedMessageId == message.id
-    
+
     val tapTapMode = remember { me.lampu.lampcord.shared.settings.Settings.shared.tapTap }
     val gestureMode = remember { me.lampu.lampcord.shared.settings.Settings.shared.swipeToReplyEnabled }
     val offsetX = remember { Animatable(0f) }
@@ -335,10 +331,7 @@ fun MessageItem(
             .zIndex(if (isHovered || showReactionPicker) 10f else 1f)
             .pointerInput(message.id, gestureMode, swipeThresholdPx) {
                 if (!isPreview && gestureMode) {
-                    // Direct manipulation: the row follows the finger 1:1 and snaps back on
-                    // release, replying when dragged past the trigger distance. The gesture only
-                    // claims leftward drags so rightward swipes still fall through to the
-                    // channel/member panels, matching Discord's swipe-to-reply.
+
                     awaitEachGesture {
                         val down = awaitFirstDown(requireUnconsumed = false)
                         val dragStart = awaitHorizontalTouchSlopOrCancellation(down.id) { change, _ ->
@@ -409,12 +402,10 @@ fun MessageItem(
                     }
                 }
             }
-            .graphicsLayer(clip = false) // Allow actions to draw outside if parent row allows
+            .graphicsLayer(clip = false)
     ) {
         val guildId = message.guild_id ?: navigationStore.selectedGuild?.id
 
-        // Reply affordance revealed from the right edge as the row is dragged left, growing and
-        // turning accent-coloured once the swipe passes the trigger distance.
         val swipeProgress = (-offsetX.value / swipeThresholdPx).coerceIn(0f, 1f)
         if (swipeProgress > 0f) {
             Icon(
@@ -536,7 +527,7 @@ fun MessageItem(
                                 }
                             }
                             IconButton(
-                                onClick = { 
+                                onClick = {
                                     showReactionPicker = true
                                     onDismiss()
                                 },
@@ -553,7 +544,7 @@ fun MessageItem(
                 openRequest = messageLongPressRequest
             ) {
                 val guilds by guildStore.guilds.collectAsState()
-                val roleData = remember(message, guilds, navigationStore.selectedGuild, members, cAuthor, cMember) {
+                val roleData = remember(message, guilds, navigationStore.selectedGuild, cAuthor, cMember) {
                     val guild = (if (message.guild_id != null) guilds.find { it.id == message.guild_id } else null)
                         ?: navigationStore.selectedGuild
                         ?: return@remember null
@@ -578,7 +569,7 @@ fun MessageItem(
 
                 val roleColor = roleData?.first ?: Color.Unspecified
                 val roleGradient = roleData?.second
-                
+
                 val displayColor = if (roleColor == Color.Unspecified) MaterialTheme.colorScheme.onSurface else roleColor
 
                 @Composable
@@ -624,7 +615,7 @@ fun MessageItem(
                                 else MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = if (useBubbles) 0.7f else 0.5f)
                             )
-                            
+
                             if (message.isDeleted) {
                                 Spacer(Modifier.width(8.dp))
                                 Text(
@@ -636,7 +627,7 @@ fun MessageItem(
                             }
                         }
                     }
-                    
+
                     val hasSnapshots = !message.message_snapshots.isNullOrEmpty()
                     val snapshotContent = message.message_snapshots?.firstOrNull()?.message?.content
                     val isDuplicateForward = hasSnapshots && message.content.trim() == snapshotContent?.trim()
@@ -962,7 +953,7 @@ fun MessageItem(
                         scaleX = actionScale
                         scaleY = actionScale
                         clip = false
-                        translationY = -16.dp.toPx() // Explicitly move up in graphics layer
+                        translationY = -16.dp.toPx()
                     }
                     .layout { measurable, constraints ->
                         val placeable = measurable.measure(constraints)
@@ -1102,7 +1093,7 @@ fun CreateThreadDialog(
     onConfirm: (String) -> Unit
 ) {
     var name by remember { mutableStateOf("") }
-    
+
     androidx.compose.ui.window.Dialog(onDismissRequest = onDismiss) {
         Surface(
             shape = RoundedCornerShape(16.dp),
@@ -1115,9 +1106,9 @@ fun CreateThreadDialog(
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
-                
+
                 Spacer(Modifier.height(16.dp))
-                
+
                 TextField(
                     value = name,
                     onValueChange = { name = it },
@@ -1125,9 +1116,9 @@ fun CreateThreadDialog(
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
-                
+
                 Spacer(Modifier.height(24.dp))
-                
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
@@ -1161,8 +1152,6 @@ private fun emojiFromKey(key: String): Emoji {
     }
 }
 
-// Like Discord, a message that is nothing but a link to a GIF or image shows only the embed: repeating the
-// URL above it adds nothing. Anything else in the message (text, a second link) keeps the content visible.
 private fun Message.isOnlyEmbeddedMediaLink(): Boolean {
     val link = content.trim().removeSurrounding("<", ">")
     if (link.isEmpty() || link.any(Char::isWhitespace) || !link.startsWith("http", ignoreCase = true)) return false

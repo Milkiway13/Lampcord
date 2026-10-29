@@ -52,9 +52,9 @@ fun ForumPostList(
 ) {
     val forumChannel = navigationStore.selectedChannel ?: return
     val allChannels by guildStore.allGuildChannels.collectAsState()
-    val forumThreads = remember(forumChannel.id, allChannels.size) { 
+    val forumThreads = remember(forumChannel.id, allChannels.size) {
         guildStore.getForumThreads(forumChannel.id)
-            .sortedByDescending { it.lastMessageId() ?: it.id } 
+            .sortedByDescending { it.lastMessageId() ?: it.id }
     }
 
     var selectedTags by remember { mutableStateOf(setOf<String>()) }
@@ -62,8 +62,8 @@ fun ForumPostList(
 
     val filteredThreads = remember(forumThreads, selectedTags) {
         if (selectedTags.isEmpty()) forumThreads
-        else forumThreads.filter { thread -> 
-            thread.applied_tags?.any { it in selectedTags } == true 
+        else forumThreads.filter { thread ->
+            thread.applied_tags?.any { it in selectedTags } == true
         }
     }
 
@@ -76,7 +76,7 @@ fun ForumPostList(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Surface(
-                        onClick = { /* Sort */ },
+                        onClick = {  },
                         shape = RoundedCornerShape(8.dp),
                         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                     ) {
@@ -91,7 +91,7 @@ fun ForumPostList(
                     }
 
                     Surface(
-                        onClick = { /* All Tags */ },
+                        onClick = {  },
                         shape = RoundedCornerShape(8.dp),
                         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                     ) {
@@ -215,9 +215,9 @@ fun NewPostDialog(
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
-                
+
                 Spacer(Modifier.height(16.dp))
-                
+
                 TextField(
                     value = title,
                     onValueChange = { title = it },
@@ -226,9 +226,9 @@ fun NewPostDialog(
                     singleLine = true,
                     enabled = !isLoading
                 )
-                
+
                 Spacer(Modifier.height(12.dp))
-                
+
                 TextField(
                     value = content,
                     onValueChange = { content = it },
@@ -258,9 +258,9 @@ fun NewPostDialog(
                         }
                     }
                 }
-                
+
                 Spacer(Modifier.height(24.dp))
-                
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
@@ -305,8 +305,8 @@ fun NewPostDialog(
 
 @Composable
 fun ForumPostItem(
-    thread: Channel, 
-    forumChannel: Channel, 
+    thread: Channel,
+    forumChannel: Channel,
     onClick: () -> Unit,
     userStore: UserStore = koinInject(),
     navigationStore: NavigationStore = koinInject(),
@@ -316,7 +316,7 @@ fun ForumPostItem(
     val author = remember(thread, allUsers) {
         thread.message?.author ?: thread.owner_id?.let { allUsers[it] }
     }
-    
+
     val timeAgo = remember(thread) {
         val timestamp = (thread.id.toLong() shr 22) + 1420070400000L
         DateTimeUtils.formatDiscordTimestamp(timestamp / 1000, "R")

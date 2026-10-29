@@ -98,13 +98,13 @@ fun MemberHeader(
                     .height(40.dp)
                     .clip(RoundedCornerShape(20.dp))
                     .background(
-                        if (isFocused) MaterialTheme.colorScheme.surfaceContainerHigh 
+                        if (isFocused) MaterialTheme.colorScheme.surfaceContainerHigh
                         else MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.65f)
                     )
                     .border(
-                        1.dp, 
-                        if (isFocused) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) 
-                        else Color.Transparent, 
+                        1.dp,
+                        if (isFocused) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                        else Color.Transparent,
                         RoundedCornerShape(20.dp)
                     )
             ) {
@@ -167,7 +167,7 @@ fun MemberHeader(
                             }
                             if (searchStore.searchQuery.isNotEmpty()) {
                                 IconButton(
-                                    onClick = { 
+                                    onClick = {
                                         searchStore.searchQuery = ""
                                         autocompleteStore.clear(isSearch = true)
                                     },
@@ -187,7 +187,7 @@ fun MemberHeader(
 
                 DropdownMenu(
                     expanded = isFocused && autocompleteStore.searchAutocompleteType != null && autocompleteStore.searchAutocompleteItems.isNotEmpty(),
-                    onDismissRequest = { /* Don't hide here to keep focus */ },
+                    onDismissRequest = {  },
                     properties = androidx.compose.ui.window.PopupProperties(focusable = false),
                     modifier = Modifier.width(300.dp).background(MaterialTheme.colorScheme.surfaceContainerHigh),
                     offset = DpOffset(16.dp, 4.dp)
@@ -247,7 +247,7 @@ fun MemberHeader(
                         else -> Icons.Filled.Tag
                     }
                 }
-                
+
                 val name = remember(channel, allUsers, isDm, currentUser) {
                     if (isDm) {
                         if (channel.type == 3) {
@@ -382,7 +382,7 @@ fun MemberHeader(
         }
 
         Spacer(Modifier.height(16.dp))
-        
+
         if (!isDesktop) {
             Spacer(Modifier.height(16.dp))
 

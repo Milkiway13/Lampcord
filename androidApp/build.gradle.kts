@@ -29,12 +29,10 @@ android {
 
         val appVersion = project.property("appVersion") as String
         val nightlyBuild = (project.findProperty("nightlyBuild") as String?)?.toIntOrNull() ?: 0
-        // Nightlies install as a separate app (.nightly) so the two channels never contend for
-        // one versionCode; each channel updates itself and they can even coexist on a device.
+
         applicationId = if (nightlyBuild > 0) "me.lampu.lampcord.nightly" else "me.lampu.lampcord"
         versionName = if (nightlyBuild > 0) "$appVersion-nightly.$nightlyBuild" else appVersion
-        // The installer rejects any update whose versionCode does not increase, so each channel
-        // gets a monotonic code: stable from its X.Y.Z, nightly from the CI build number.
+
         val (versionMajor, versionMinor, versionPatch) =
             appVersion.substringBefore('-').split('.').map { it.toIntOrNull() ?: 0 }
         versionCode = if (nightlyBuild > 0) {
@@ -44,9 +42,7 @@ android {
         }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        // All four by default so the app installs on desktop emulators, whose system
-        // images are x86 or x86_64 even though no real device uses those ABIs. Release
-        // builds narrow this to the two ARM ABIs that every actual user needs.
+
         ndk { abiFilters += (providers.gradleProperty("voiceAbis").orNull ?: "armeabi-v7a,arm64-v8a,x86,x86_64").split(",") }
         externalNativeBuild {
             cmake {
@@ -83,8 +79,7 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            // CI can build an installable optimized APK without exposing a
-            // release keystore. A configured keystore is still preferred.
+
             signingConfig = if (hasReleaseSigning) {
                 signingConfigs.getByName("release")
             } else {

@@ -87,7 +87,7 @@ fun DesktopBaseplate(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh) // Guild Rail background
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
     ) {
         Row(
             modifier = Modifier
@@ -137,7 +137,7 @@ fun DesktopBaseplate(
                             val isVoice = activeChannel.type == 2 || activeChannel.type == 13
                             Column(modifier = Modifier.fillMaxSize()) {
                                 ChannelHeader(activeChannel, navigationStore, isCompactMemberList = widthBreakpoint == WindowWidthBreakpoint.MEDIUM)
-                                
+
                                 Box(modifier = Modifier.weight(1f)) {
                                     if (isVoice) {
                                         if (voiceStore.isVoiceChatTextVisible && widthBreakpoint >= WindowWidthBreakpoint.LARGE) {
@@ -159,7 +159,7 @@ fun DesktopBaseplate(
                                         )
                                     }
                                 }
-                                
+
                                 if (activeChannel.type != 15 && ((!isVoice) || voiceStore.isVoiceChatTextVisible)) {
                                     ChatInputBar(activeChannel)
                                 }
@@ -175,8 +175,8 @@ fun DesktopBaseplate(
                 }
             }
 
-            val showPersistentSidePanel = activeChannel != null && 
-                                activeChannel.type != 15 && 
+            val showPersistentSidePanel = activeChannel != null &&
+                                activeChannel.type != 15 &&
                                 (activeChannel.guild_id != null || activeChannel.type == 1 || activeChannel.type == 3) &&
                                 widthBreakpoint >= WindowWidthBreakpoint.EXPANDED &&
                                 navigationStore.isProfilePanelVisible
@@ -216,8 +216,8 @@ fun DesktopBaseplate(
             }
         }
 
-        val showModalSidePanel = activeChannel != null && 
-                            activeChannel.type != 15 && 
+        val showModalSidePanel = activeChannel != null &&
+                            activeChannel.type != 15 &&
                             (activeChannel.guild_id != null || activeChannel.type == 1 || activeChannel.type == 3) &&
                             widthBreakpoint == WindowWidthBreakpoint.MEDIUM &&
                             navigationStore.isMemberListModalVisible
@@ -286,7 +286,7 @@ fun DesktopBaseplate(
         ) {
             UserProfileDialog(
                 profile = profileStore.selectedProfile,
-                onDismiss = { 
+                onDismiss = {
                     profileStore.selectedProfile = null
                     profileStore.isProfileLoading = false
                 }

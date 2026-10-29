@@ -38,7 +38,6 @@ import me.lampu.lampcord.shared.model.EmbedImage
 import org.koin.compose.koinInject
 import me.lampu.lampcord.shared.ui.kit.clickableCursor
 
-// Smallest sticker tile; rows fit as many as the width allows and stretch them to fill it.
 private val StickerMinSize = 80.dp
 
 @Composable
@@ -131,8 +130,7 @@ fun StickerPicker(
                         sticker.description?.contains(query, ignoreCase = true) == true ||
                         sticker.tags?.contains(query, ignoreCase = true) == true
                 }
-                // A pack only stays when it still has something to show, otherwise its header
-                // would sit above an empty strip.
+
                 if (matches.isEmpty()) null else pack.copy(stickers = matches)
             }
         }
@@ -148,7 +146,7 @@ fun StickerPicker(
         var acc = 0
         filteredStickerGroups.forEach { _ ->
             offsets.add(acc)
-            acc += 2 // 1 for header, 1 for the sticker grid
+            acc += 2
         }
         offsets
     }
@@ -224,8 +222,7 @@ fun StickerPicker(
                         }
                     }
                     item(key = "stickers_${pack.id}") {
-                        // Fixed 80dp tiles left the leftover width as an empty strip on the right. Fit as many
-                        // columns as the width allows at that minimum size and stretch them to fill the row.
+
                         BoxWithConstraints(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
                             val spacing = 8.dp
                             val columns = ((maxWidth + spacing) / (StickerMinSize + spacing)).toInt().coerceAtLeast(1)
@@ -294,7 +291,7 @@ fun StickerPicker(
                                                 )
                                             }
                                         }
-                                        // Keep a short last row on the same grid instead of stretching its tiles.
+
                                         repeat(columns - rowStickers.size) { Spacer(Modifier.weight(1f)) }
                                     }
                                 }

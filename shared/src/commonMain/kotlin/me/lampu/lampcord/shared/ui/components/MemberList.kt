@@ -77,7 +77,6 @@ fun MemberList(
             }
     }
 
-    val presences = presenceStore.presences.collectAsState()
     val relationshipTypes = relationshipStore.relationshipTypes.collectAsState()
     val currentUser by userStore.currentUser.collectAsState()
     val currentUserId = currentUser?.id
@@ -93,7 +92,7 @@ fun MemberList(
             currentUserId = currentUserId,
             currentUserStatus = currentUserStatus,
             developerMode = developerMode,
-            presences = presences,
+            presenceStore = presenceStore,
             relationshipTypes = relationshipTypes,
             animate = !isTouch && !reduceMotion,
             isTouch = isTouch,
@@ -239,7 +238,7 @@ fun MemberList(
                                 if (baseId != null) {
                                     baseId
                                 } else {
-                                    // A row can be transiently empty while the store repopulates, so only those fall back to the index.
+
                                     "pending-$index"
                                 }
                             },

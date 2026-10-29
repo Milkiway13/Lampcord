@@ -45,7 +45,7 @@ actual class VoiceGatewayManager actual constructor(private val client: HttpClie
                 throw e
             } catch (e: Throwable) {
                 if (active === connection) {
-                    // Protocol payloads and tokens must never enter logs or the error UI.
+
                     val message = if (e is VoiceFailure) e.message else "Voice connection failed. Check your audio devices and network, then retry."
                     mutableStatus.value = VoiceConnectionStatus(channelId, VoicePhase.FAILED, message)
                 }
@@ -348,7 +348,7 @@ actual class VoiceGatewayManager actual constructor(private val client: HttpClie
             true
         } catch (_: Exception) {
             currentCoroutineContext().ensureActive()
-            false // A closing WebSocket must not take down the independent audio/UDP session.
+            false
         }
 
         private suspend fun captureAudio() {

@@ -95,8 +95,7 @@ fun FullProfileDetails(
     val isOwnProfile = user.id == currentUser?.id
     val textColor = theme.customTextColor ?: MaterialTheme.colorScheme.onSurface
     val listState = remember(selectedTab) { LazyListState() }
-    // Board and the mutual tabs are optional, so the tab IDs aren't positions in the row: the row needs the
-    // selected tab's index among the tabs actually shown, or it indexes past the end when Board is hidden.
+
     val visibleTabs = buildList {
         add(TAB_ACTIVITY)
         if (boardHasContent) add(TAB_BOARD)

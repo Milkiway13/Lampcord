@@ -17,7 +17,6 @@ interface MessageDao {
     @Query("SELECT * FROM logged_messages WHERE id = :id")
     suspend fun getMessageById(id: String): MessageEntity?
 
-    /** Read-modify-write for an edit; the lookup and update must share a transaction. */
     @Transaction
     suspend fun applyEdit(
         id: String,
@@ -37,6 +36,9 @@ interface MessageDao {
 
     @Query("UPDATE logged_messages SET isDeleted = 1 WHERE id = :id")
     suspend fun markDeleted(id: String)
+
+    @Query("DELETE FROM logged_messages WHERE timestamp < :cutoff")
+    suspend fun deleteOlderThan(cutoff: String)
 
     @Query("DELETE FROM logged_messages")
     suspend fun clearAll()

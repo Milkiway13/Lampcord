@@ -6,6 +6,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil3.SingletonImageLoader
+import coil3.compose.LocalPlatformContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.lampu.lampcord.shared.state.SettingsStore
 import me.lampu.lampcord.shared.ui.components.settings.*
 import me.lampu.lampcord.shared.model.UserSettings
@@ -24,8 +30,6 @@ import me.lampu.lampcord.shared.generated.resources.lampcord_settings_reset_app_
 import me.lampu.lampcord.shared.generated.resources.lampcord_settings_reset_app_state_desc
 import me.lampu.lampcord.shared.generated.resources.lampcord_settings_show_hidden_channels
 import me.lampu.lampcord.shared.generated.resources.lampcord_settings_show_hidden_channels_desc
-import me.lampu.lampcord.shared.generated.resources.lampcord_settings_use_custom_titlebar
-import me.lampu.lampcord.shared.generated.resources.lampcord_settings_use_custom_titlebar_desc
 import me.lampu.lampcord.shared.generated.resources.lampcord_settings_wayland_scaling
 import me.lampu.lampcord.shared.generated.resources.lampcord_settings_wayland_scaling_desc
 import me.lampu.lampcord.shared.generated.resources.lampcord_settings_window
@@ -49,10 +53,9 @@ fun AdvancedSettings(
 fun AdvancedSettingsContent(settingsStore: SettingsStore = koinInject()) {
     Column(modifier = Modifier.fillMaxWidth()) {
         val isDesktop = remember { getPlatformName() != "android" && getPlatformName() != "ios" }
-        val isWindows = remember { getPlatformName() == "windows" }
         val devMode = settingsStore.userSettings?.developer_mode ?: false
-        val labelUseCustomTitlebar = stringResource(Res.string.lampcord_settings_use_custom_titlebar)
-        val descUseCustomTitlebar = stringResource(Res.string.lampcord_settings_use_custom_titlebar_desc)
+        val context = LocalPlatformContext.current
+        val scope = rememberCoroutineScope()
         val labelWaylandScaling = stringResource(Res.string.lampcord_settings_wayland_scaling)
         val descWaylandScaling = stringResource(Res.string.lampcord_settings_wayland_scaling_desc)
         Material3SettingsGroup(
@@ -81,13 +84,6 @@ fun AdvancedSettingsContent(settingsStore: SettingsStore = koinInject()) {
             Material3SettingsGroup(
                 title = stringResource(Res.string.lampcord_settings_window),
                 items = buildList {
-                    // Windows always uses the in-app title bar; see useSystemWindowFrame in the desktop Main.kt.
-                    if (!isWindows) add(switchSettingsItem(
-                        title = labelUseCustomTitlebar,
-                        description = descUseCustomTitlebar,
-                        checked = settingsStore.useCustomTitlebar,
-                        onCheckedChange = { settingsStore.useCustomTitlebar = it }
-                    ))
                     add(switchSettingsItem(
                         title = labelWaylandScaling,
                         description = descWaylandScaling,
@@ -131,7 +127,15 @@ fun AdvancedSettingsContent(settingsStore: SettingsStore = koinInject()) {
                 Material3SettingsItem(
                     title = { Text(stringResource(Res.string.lampcord_settings_clear_cache)) },
                     description = { Text(stringResource(Res.string.lampcord_settings_clear_cache_desc)) },
-                    onClick = { /* TODO */ }
+                    onClick = {
+                        scope.launch {
+                            withContext(Dispatchers.IO) {
+                                val loader = SingletonImageLoader.get(context)
+                                loader.diskCache?.clear()
+                                loader.memoryCache?.clear()
+                            }
+                        }
+                    }
                 ),
                 Material3SettingsItem(
                     title = { Text(stringResource(Res.string.lampcord_settings_reset_app_state)) },

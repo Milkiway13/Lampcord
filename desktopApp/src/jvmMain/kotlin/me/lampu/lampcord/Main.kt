@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import dev.nucleusframework.application.Window
 import dev.nucleusframework.application.nucleusApplication
 import dev.nucleusframework.composenativetray.tray.api.Tray
 import dev.nucleusframework.energymanager.EnergyManager
@@ -28,9 +29,6 @@ import dev.nucleusframework.systemcolor.systemAccentColor
 import dev.nucleusframework.updater.NucleusUpdater
 import dev.nucleusframework.updater.UpdateResult
 import dev.nucleusframework.updater.provider.GitHubProvider
-import dev.nucleusframework.window.material.MaterialDecoratedWindow
-import dev.nucleusframework.window.material.MaterialTitleBar
-import dev.nucleusframework.window.material.rememberMaterialTitleBarStyle
 import me.lampu.lampcord.shared.di.appModule
 import me.lampu.lampcord.shared.rpc.DesktopRPCServer
 import me.lampu.lampcord.shared.state.SessionManager
@@ -40,6 +38,8 @@ import me.lampu.lampcord.shared.settings.ThemeMode
 import me.lampu.lampcord.shared.ui.App
 import me.lampu.lampcord.shared.ui.icons.Icons
 import me.lampu.lampcord.shared.utils.Logging
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import me.lampu.lampcord.shared.utils.getPlatformName
 import me.lampu.lampcord.shared.utils.reloadTrigger
@@ -51,13 +51,14 @@ import org.koin.core.context.GlobalContext.getOrNull
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 
+@OptIn(FlowPreview::class)
 fun main() {
     Logging.debugEnabled = Settings.shared.verboseLogging
 
     WaylandScale.detectAndApply()
 
     fun initApp() {
-        runCatching { getOrNull()?.getOrNull<SessionManager>()?.shutdown() } // shut down app if it's open already
+        runCatching { getOrNull()?.getOrNull<SessionManager>()?.shutdown() }
         stopKoin()
         startKoin {
             modules(appModule, me.lampu.lampcord.shared.di.desktopNotificationModule)
@@ -72,26 +73,10 @@ fun main() {
     rpcServer.start()
 
     val isLinux = getPlatformName() == "linux"
-    val isMac = getPlatformName() == "macos"
-    val isWindows = getPlatformName() == "windows"
-
-    // Older builds defaulted to the system window frame, and enableSystemWindowFrame already
-    // defaults to true, so this migration only has to record that it ran. Forcing the value
-    // here is what made "Use Custom Titlebar" look broken: for anyone whose applied flags
-    // were not set yet, picking the custom title bar and restarting reset the preference
-    // back to the system frame and discarded the choice.
-    if (isMac) {
-        Settings.shared.macDefaultFrameApplied = true
-    }
-    if (isLinux) {
-        Settings.shared.linuxDefaultFrameApplied = true
-        Settings.shared.waylandDefaultFrameApplied = true
-    }
-    // The window's native frame is fixed when the window is created, so this is read once and
-    // never recomposed. Changing the setting takes effect on the next launch.
-    // Nucleus always draws the window chrome itself on Windows, so there is no native frame to fall back
-    // to: skipping the title bar there leaves the window with no caption buttons at all.
-    val useSystemWindowFrame = !isWindows && Settings.shared.enableSystemWindowFrame
+    val isHyprland = isLinux && (
+        System.getenv("HYPRLAND_INSTANCE_SIGNATURE") != null ||
+            System.getenv("XDG_CURRENT_DESKTOP")?.contains("hyprland", ignoreCase = true) == true
+        )
 
     nucleusApplication {
         val reloadKey by reloadTrigger.collectAsState()
@@ -135,16 +120,38 @@ fun main() {
             }
         }
 
-        val savedWidth = 1200
-        val savedHeight = 800
+        val savedWidth = Settings.shared.windowWidth
+        val savedHeight = Settings.shared.windowHeight
 
-        val windowPlacement = WindowPlacement.Floating
+        val windowPlacement = when (Settings.shared.windowPlacement) {
+            "maximized" -> WindowPlacement.Maximized
+            "fullscreen" -> WindowPlacement.Fullscreen
+            else -> WindowPlacement.Floating
+        }
         val windowState =
             rememberWindowState(
                 placement = windowPlacement,
                 position = WindowPosition.PlatformDefault,
                 size = DpSize(savedWidth.dp, savedHeight.dp),
             )
+
+        LaunchedEffect(windowState) {
+            snapshotFlow {
+                Triple(windowState.size.width.value, windowState.size.height.value, windowState.placement)
+            }
+                .debounce(500)
+                .collect { (width, height, placement) ->
+                    if (placement == WindowPlacement.Floating) {
+                        Settings.shared.windowWidth = width.toInt().coerceAtLeast(640)
+                        Settings.shared.windowHeight = height.toInt().coerceAtLeast(480)
+                    }
+                    Settings.shared.windowPlacement = when (placement) {
+                        WindowPlacement.Maximized -> "maximized"
+                        WindowPlacement.Fullscreen -> "fullscreen"
+                        else -> "floating"
+                    }
+                }
+        }
 
         val isDark = when (settingsStore.themeMode) {
             ThemeMode.LIGHT -> false
@@ -159,6 +166,9 @@ fun main() {
             ) else MaterialTheme.colorScheme
         ) {
             val scope = rememberCoroutineScope()
+            val windowColorScheme = MaterialTheme.colorScheme
+            val windowTypography = MaterialTheme.typography
+            val windowShapes = MaterialTheme.shapes
 
             Tray(
                 icon = dynamicIcon,
@@ -188,24 +198,25 @@ fun main() {
                 }
             }
 
-            MaterialDecoratedWindow(
+            Window(
                 onCloseRequest = { exitApplication() },
                 title = "Lampcord",
                 icon = dynamicIcon,
                 state = windowState,
-                undecorated = !useSystemWindowFrame,
+                undecorated = isHyprland,
             ) {
-                DisposableEffect(Unit) {
-                    EnergyManager.keepScreenAwake()
-                    onDispose { EnergyManager.releaseScreenAwake() }
-                }
-                if (!useSystemWindowFrame) {
-                    MaterialTitleBar(
-                        style = rememberMaterialTitleBarStyle(MaterialTheme.colorScheme)
-                    )
-                }
-                WaylandDensityProvider {
-                    App()
+                MaterialTheme(
+                    colorScheme = windowColorScheme,
+                    typography = windowTypography,
+                    shapes = windowShapes,
+                ) {
+                    DisposableEffect(Unit) {
+                        EnergyManager.keepAwake()
+                        onDispose { EnergyManager.releaseAwake() }
+                    }
+                    WaylandDensityProvider {
+                        App()
+                    }
                 }
             }
         }

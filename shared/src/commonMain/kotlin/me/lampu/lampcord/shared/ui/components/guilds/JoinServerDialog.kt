@@ -13,6 +13,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import me.lampu.lampcord.shared.api.GuildApi
+import me.lampu.lampcord.shared.api.JoinGuildResult
 import me.lampu.lampcord.shared.model.Guild
 import me.lampu.lampcord.shared.ui.baseplates.RegularGuildItem
 import me.lampu.lampcord.shared.ui.icons.Icons
@@ -39,13 +40,14 @@ fun JoinServerDialog(
         }
         busy = true
         error = null
-        val guild = guildApi.joinGuild(code)
+        val result = guildApi.joinGuild(code)
         busy = false
-        if (guild != null) {
-            onJoined(guild)
-            onDismiss()
-        } else {
-            error = "That invite is invalid, expired, or you are already in that server."
+        when (result) {
+            is JoinGuildResult.Joined -> {
+                onJoined(result.guild)
+                onDismiss()
+            }
+            is JoinGuildResult.Failed -> error = result.message
         }
     }
 

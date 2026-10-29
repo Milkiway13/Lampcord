@@ -127,7 +127,7 @@ fun ProfileBanner(
                 )
         ) {
             var isImageLoaded by remember { mutableStateOf(false) }
-            
+
             if (bannerUrl != null) {
                 AsyncImage(
                     model = bannerUrl,
@@ -143,7 +143,6 @@ fun ProfileBanner(
                 )
             }
 
-            // Fallback/Loading background color that always exists
             if (!isImageLoaded) {
                 Box(
                     modifier = Modifier
@@ -151,7 +150,7 @@ fun ProfileBanner(
                         .background(theme.primaryAccent.copy(alpha = if (bannerUrl == null) 0.5f else 0.2f))
                 )
             }
-            
+
             if (onEdit != null && isHovered) {
                 Surface(
                     modifier = Modifier.align(Alignment.Center),

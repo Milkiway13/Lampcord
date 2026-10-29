@@ -60,7 +60,7 @@ class VoiceCallService : Service() {
             ACTION_END -> { store.disconnectFromVoice(); stopSelf() }
         }
         if (store.activeChannel == null) stopSelf()
-        // Never resurrect a microphone session after process death without a fresh user action.
+
         return START_NOT_STICKY
     }
 

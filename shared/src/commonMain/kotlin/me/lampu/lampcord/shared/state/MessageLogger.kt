@@ -1,12 +1,18 @@
 package me.lampu.lampcord.shared.state
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.lampu.lampcord.shared.database.MessageDao
 import me.lampu.lampcord.shared.database.MessageEntity
 import me.lampu.lampcord.shared.model.Message
+import me.lampu.lampcord.shared.utils.getCurrentTimeMillis
+import kotlin.time.Instant
+
+private const val LOG_RETENTION_MILLIS = 30L * 24 * 60 * 60 * 1000
 
 class MessageLogger(
     private val json: Json,
@@ -14,12 +20,22 @@ class MessageLogger(
     private val userStore: UserStore,
     private val scope: CoroutineScope
 ) {
+    init {
+        scope.launch {
+            runCatching {
+                messageDao.deleteOlderThan(
+                    Instant.fromEpochMilliseconds(getCurrentTimeMillis() - LOG_RETENTION_MILLIS).toString()
+                )
+            }
+        }
+    }
+
     fun logMessage(message: Message) {
         if (!me.lampu.lampcord.shared.settings.Settings.shared.messageLoggerEnabled) return
         val settings = me.lampu.lampcord.shared.settings.Settings.shared
         if (settings.messageLoggerIgnoreBots && message.author?.bot == true) return
         if (settings.messageLoggerIgnoreSelf && message.author?.id == userStore.currentUser.value?.id) return
-        
+
         scope.launch {
             try {
                 val entity = MessageEntity(
@@ -78,27 +94,29 @@ class MessageLogger(
     }
 
     suspend fun getLoggedMessages(channelId: String): List<Message> {
-        return try {
-            val entities = messageDao.getMessagesForChannel(channelId)
-            entities.map { entity ->
-                val base = try {
-                    json.decodeFromString<Message>(entity.jsonPayload)
-                } catch (e: Exception) {
-                    // Fallback reconstruction if JSON is corrupted
-                    Message(
-                        id = entity.id,
-                        channel_id = entity.channelId,
-                        content = entity.content,
-                        timestamp = entity.timestamp
+        return withContext(Dispatchers.Default) {
+            try {
+                val entities = messageDao.getMessagesForChannel(channelId)
+                entities.map { entity ->
+                    val base = try {
+                        json.decodeFromString<Message>(entity.jsonPayload)
+                    } catch (e: Exception) {
+
+                        Message(
+                            id = entity.id,
+                            channel_id = entity.channelId,
+                            content = entity.content,
+                            timestamp = entity.timestamp
+                        )
+                    }
+                    base.copy(
+                        isDeleted = entity.isDeleted,
+                        oldContent = entity.oldContent
                     )
                 }
-                base.copy(
-                    isDeleted = entity.isDeleted,
-                    oldContent = entity.oldContent
-                )
+            } catch (e: Exception) {
+                emptyList()
             }
-        } catch (e: Exception) {
-            emptyList()
         }
     }
 }

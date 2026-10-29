@@ -145,7 +145,7 @@ fun ServerBottomSheet(
                             .background(MaterialTheme.colorScheme.primaryContainer)
                     )
                 }
-                
+
                 Surface(
                     modifier = Modifier
                         .padding(start = 16.dp)
@@ -195,7 +195,7 @@ fun ServerBottomSheet(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        // Online count if available, otherwise just member count
+
                         val onlineCount = remember(guild, memberListStore.getOnlineCount(guild.id)) {
                             guild.approximate_presence_count ?: memberListStore.getOnlineCount(guild.id)
                         }
@@ -246,7 +246,7 @@ fun ServerBottomSheet(
                                 if (inviteChannel != null) showInviteDialog = true
                             }
                         )
-                        
+
                         if (canManageGuild) {
                             actions.add(Triple(Icons.Rounded.Settings, "Settings") {
                                 navigationStore.isServerSettingsVisible = true

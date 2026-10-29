@@ -25,6 +25,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.derivedStateOf
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -41,7 +44,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.zIndex
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
@@ -49,7 +51,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import me.lampu.lampcord.shared.state.MessageStore
@@ -98,23 +99,24 @@ fun ChatArea(
         if (channelId == null) "0" else readStates[channelId]?.last_message_id?.toString()?.removeSurrounding("\"") ?: "0"
     }
 
-    val unreadMessagesCount = remember(messages, ackedMessageId) {
-        val ackedLong = ackedMessageId.toLongOrNull() ?: 0L
-        messages.count { (it.id.toLongOrNull() ?: 0L) > ackedLong && !it.isPending }
+    val unreadMessagesCount by remember {
+        derivedStateOf {
+            val ackedLong = ackedMessageId.toLongOrNull() ?: 0L
+            messages.count { (it.id.toLongOrNull() ?: 0L) > ackedLong && !it.isPending }
+        }
     }
 
-    val firstUnreadMessageId = remember(messages, ackedMessageId) {
-        val ackedLong = ackedMessageId.toLongOrNull() ?: 0L
-        messages.findLast { (it.id.toLongOrNull() ?: 0L) > ackedLong && !it.isPending }?.id
+    val firstUnreadMessageId by remember {
+        derivedStateOf {
+            val ackedLong = ackedMessageId.toLongOrNull() ?: 0L
+            messages.findLast { (it.id.toLongOrNull() ?: 0L) > ackedLong && !it.isPending }?.id
+        }
     }
 
     val isScrolledFromBottom by remember(scrollState) {
         derivedStateOf { scrollState.firstVisibleItemIndex > 0 }
     }
 
-    // Report this view as attached so the gateway can auto-acknowledge while it is genuinely
-    // on screen and scrolled to the bottom. Discord derives the same thing from the chat list's
-    // LinearLayoutManager, which stops reporting once the activity is not resumed.
     DisposableEffect(channelId) {
         if (channelId != null) {
             navigationStore.setChatInteraction(channelId, true)
@@ -127,6 +129,7 @@ fun ChatArea(
     }
 
     LaunchedEffect(scrollState) {
+        var ackJob: Job? = null
         snapshotFlow {
             val visibleItems = scrollState.layoutInfo.visibleItemsInfo
             val atBottom = scrollState.firstVisibleItemIndex == 0
@@ -138,14 +141,17 @@ fun ChatArea(
             .collect { (atBottom, lastVisibleItemIndex) ->
                 if (lastVisibleItemIndex != null) {
 
-
                     if (channelId != null) {
                         navigationStore.setChatInteraction(channelId, atBottom)
                     }
                     if (atBottom && messages.isNotEmpty()) {
                         val latestId = messages.first().id
                         if ((latestId.toLongOrNull() ?: 0L) > (ackedMessageId.toLongOrNull() ?: 0L)) {
-                            readStateStore.ackMessage(channelId ?: "", latestId)
+                            ackJob?.cancel()
+                            ackJob = launch {
+                                delay(1500)
+                                readStateStore.ackMessage(channelId ?: "", latestId)
+                            }
                         }
                     }
                     if (lastVisibleItemIndex >= messages.size - 5) {
@@ -236,14 +242,16 @@ fun ChatArea(
             )
         }
 
-        val filteredMessages = remember(messages, relationships) {
-            val hideBlocked = me.lampu.lampcord.shared.settings.Settings.shared.hideBlockedMessages
-            if (hideBlocked) {
-                messages.filter { msg ->
-                    val authorId = msg.author?.id
-                    if (authorId == null) true
-                    else relationships.none { (it.id ?: it.user?.id ?: it.user_id) == authorId && it.type == 2 }
-                }
+        val blockedAuthorIds = remember(relationships) {
+            relationships.asSequence()
+                .filter { it.type == 2 }
+                .mapNotNull { it.id ?: it.user?.id ?: it.user_id }
+                .toSet()
+        }
+
+        val filteredMessages = remember(messages, blockedAuthorIds) {
+            if (me.lampu.lampcord.shared.settings.Settings.shared.hideBlockedMessages) {
+                messages.filter { msg -> msg.author?.id?.let { it !in blockedAuthorIds } ?: true }
             } else messages
         }
 
@@ -281,7 +289,7 @@ fun ChatArea(
                     val priorType = priorMessage.type ?: 0
                     if (currentType != 0 && currentType != 19) return@remember false
                     if (priorType != 0 && priorType != 19) return@remember false
-                    
+
                     try {
                         val currentTs = Instant.parse(message.timestamp)
                         val priorTs = Instant.parse(priorMessage.timestamp)
@@ -291,23 +299,20 @@ fun ChatArea(
                     }
                 }
 
-                val itemZIndex = (filteredMessages.size - index).toFloat()
                 val isFirstUnread = message.id == firstUnreadMessageId
 
-                Column(modifier = Modifier.fillMaxWidth().zIndex(itemZIndex).graphicsLayer(clip = false)) {
+                Column(modifier = Modifier.fillMaxWidth()) {
                     if (showDateSeparator) {
                         DateSeparator(message.timestamp)
                     }
                     if (isFirstUnread) {
                         UnreadSeparator()
                     }
-                    Box((if (reduceMotion) Modifier else Modifier.animateItem()).graphicsLayer(clip = false)) {
-                        MessageItem(
-                            message = message,
-                            priorMessage = if (isInline) priorMessage else null,
-                            nextMessage = nextMessage
-                        )
-                    }
+                    MessageItem(
+                        message = message,
+                        priorMessage = if (isInline) priorMessage else null,
+                        nextMessage = nextMessage
+                    )
                 }
             }
             item {
@@ -399,8 +404,8 @@ fun ChatArea(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.ArrowDownward, 
-                        contentDescription = null, 
+                        imageVector = Icons.Filled.ArrowDownward,
+                        contentDescription = null,
                         modifier = Modifier.size(14.dp),
                         tint = MaterialTheme.colorScheme.onPrimary
                     )

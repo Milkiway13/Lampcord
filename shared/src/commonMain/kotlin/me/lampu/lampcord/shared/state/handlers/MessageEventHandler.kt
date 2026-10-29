@@ -151,7 +151,7 @@ class MessageEventHandler(
         val id = obj["id"]?.jsonPrimitive?.content ?: return
         val channelId = obj["channel_id"]?.jsonPrimitive?.content ?: return
         messageLogger.logDelete(channelId, id)
-        messageStore.handleMessageDelete(id)
+        messageStore.handleMessageDelete(id, channelId)
         readStateStore.handleMessageDelete(channelId, id)
     }
 

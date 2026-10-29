@@ -19,8 +19,8 @@ class VoiceProtocolTest {
             val tampered = first.copyOf().also { it[12] = (it[12].toInt() xor 1).toByte() }
             assertNull(receiver.decrypt(tampered))
             assertContentEquals(opus, receiver.decrypt(second)!!.frame)
-            assertContentEquals(opus, receiver.decrypt(first)!!.frame) // Out of order is allowed.
-            assertNull(receiver.decrypt(first)) // Authenticated replay is not.
+            assertContentEquals(opus, receiver.decrypt(first)!!.frame)
+            assertNull(receiver.decrypt(first))
             for (size in 0..first.size) receiver.decrypt(first.copyOf(size))
 
             val header = ByteBuffer.allocate(20).put(0xb1.toByte()).put(120).putShort(7).putInt(960)
@@ -44,7 +44,7 @@ class VoiceProtocolTest {
             assertTrue(NativeVoice.init(native, 1).isNotEmpty())
             val frame = NativeVoice.encode(native, ShortArray(1920), false)
             assertTrue(frame.isNotEmpty())
-            assertNull(NativeVoice.encrypt(native, 42, frame)) // No MLS group, no audio transmission.
+            assertNull(NativeVoice.encrypt(native, 42, frame))
             assertNull(NativeVoice.decrypt(native, "5678567856785678", frame))
             assertFailsWith<IllegalStateException> { NativeVoice.init(native, 0) }
             assertFailsWith<IllegalStateException> { NativeVoice.encode(native, ShortArray(10), false) }

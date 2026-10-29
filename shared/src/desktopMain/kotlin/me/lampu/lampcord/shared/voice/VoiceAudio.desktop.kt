@@ -59,7 +59,7 @@ private class DesktopVoiceAudio : VoiceAudio {
         check(!closed)
     }
 
-    override fun setSpeaker(enabled: Boolean) = Unit // Desktop uses the system-selected devices.
+    override fun setSpeaker(enabled: Boolean) = Unit
 
     @Synchronized override fun close() {
         if (closed) return
