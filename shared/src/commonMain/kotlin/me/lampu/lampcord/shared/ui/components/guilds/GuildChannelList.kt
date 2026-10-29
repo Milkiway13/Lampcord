@@ -1,5 +1,12 @@
 package me.lampu.lampcord.shared.ui.components.guilds
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.copy_id
+import me.lampu.lampcord.shared.generated.resources.leave_server
+import me.lampu.lampcord.shared.generated.resources.mark_as_read
+import me.lampu.lampcord.shared.generated.resources.server_settings
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Box
@@ -285,7 +292,7 @@ fun GuildChannelList(
 
                     DropdownMenuItem(
                         modifier = Modifier.handCursor(),
-                        text = { Text("Mark As Read") },
+                        text = { Text(stringResource(Res.string.mark_as_read)) },
                         onClick = { 
                             g?.let { guildStore.markGuildAsRead(it.id) }
                             menuExpanded = false 
@@ -310,7 +317,7 @@ fun GuildChannelList(
                     if (canManageGuild) {
                         DropdownMenuItem(
                             modifier = Modifier.handCursor(),
-                            text = { Text("Server Settings") },
+                            text = { Text(stringResource(Res.string.server_settings)) },
                             onClick = { 
                                 navigationStore.isServerSettingsVisible = true
                                 menuExpanded = false 
@@ -322,7 +329,7 @@ fun GuildChannelList(
                     val errorColor = MaterialTheme.colorScheme.error
                     DropdownMenuItem(
                         modifier = Modifier.handCursor(),
-                        text = { Text("Leave Server", color = errorColor) },
+                        text = { Text(stringResource(Res.string.leave_server), color = errorColor) },
                         onClick = { 
                             showLeaveDialog = true
                             menuExpanded = false 
@@ -333,7 +340,7 @@ fun GuildChannelList(
                         HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
                         DropdownMenuItem(
                             modifier = Modifier.handCursor(),
-                            text = { Text("Copy ID") },
+                            text = { Text(stringResource(Res.string.copy_id)) },
                             onClick = { 
                                 g?.let { setClipboardText(it.id) }
                                 menuExpanded = false 

@@ -1,5 +1,9 @@
 package me.lampu.lampcord.shared.ui.components
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.join_voice
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -371,7 +375,7 @@ fun ChatArea(
                         ) {
                             Icon(Icons.AutoMirrored.Filled.VolumeUp, null, modifier = Modifier.size(18.dp))
                             Spacer(Modifier.width(8.dp))
-                            Text("Join Voice")
+                            Text(stringResource(Res.string.join_voice))
                         }
                     }
                 }

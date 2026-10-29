@@ -1,5 +1,12 @@
 package me.lampu.lampcord.shared.ui.components.members
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.close_dm
+import me.lampu.lampcord.shared.generated.resources.copy_id
+import me.lampu.lampcord.shared.generated.resources.lampcord_settings_clear
+import me.lampu.lampcord.shared.generated.resources.pinned_messages
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -175,7 +182,7 @@ fun MemberHeader(
                                 ) {
                                     Icon(
                                         Icons.Filled.Close,
-                                        contentDescription = "Clear",
+                                        contentDescription = stringResource(Res.string.lampcord_settings_clear),
                                         modifier = Modifier.size(16.dp),
                                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -333,7 +340,7 @@ fun MemberHeader(
                         ) {
                             DropdownMenuItem(
                                 modifier = Modifier.handCursor(),
-                                text = { Text("Close DM") },
+                                text = { Text(stringResource(Res.string.close_dm)) },
                                 onClick = {
                                     showMenu = false
                                     navigationStore.closeDm(channel.id)
@@ -342,7 +349,7 @@ fun MemberHeader(
                             )
                             DropdownMenuItem(
                                 modifier = Modifier.handCursor(),
-                                text = { Text("Pinned Messages") },
+                                text = { Text(stringResource(Res.string.pinned_messages)) },
                                 onClick = {
                                     showMenu = false
                                     navigationStore.isPinsVisible = true
@@ -352,7 +359,7 @@ fun MemberHeader(
                             if (settingsStore.userSettings?.developer_mode == true) {
                                 DropdownMenuItem(
                                     modifier = Modifier.handCursor(),
-                                    text = { Text("Copy ID") },
+                                    text = { Text(stringResource(Res.string.copy_id)) },
                                     onClick = {
                                         showMenu = false
                                         me.lampu.lampcord.shared.utils.setClipboardText(channel.id)

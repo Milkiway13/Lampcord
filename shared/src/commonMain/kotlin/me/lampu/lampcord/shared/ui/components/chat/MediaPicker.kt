@@ -1,5 +1,12 @@
 package me.lampu.lampcord.shared.ui.components.chat
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.create_thread
+import me.lampu.lampcord.shared.generated.resources.done
+import me.lampu.lampcord.shared.generated.resources.retry
+import me.lampu.lampcord.shared.generated.resources.thread_name
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
@@ -262,7 +269,7 @@ private fun MediaPickerContent(
                 onClick = onDismiss,
                 modifier = Modifier.align(Alignment.CenterEnd).padding(top = if (isMobile) 0.dp else 8.dp)
             ) {
-                Text("Done")
+                Text(stringResource(Res.string.done))
             }
         }
 
@@ -274,7 +281,7 @@ private fun MediaPickerContent(
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("Permission denied", color = MaterialTheme.colorScheme.error)
                                 Button(onClick = { permissionRequested = false }) {
-                                    Text("Retry")
+                                    Text(stringResource(Res.string.retry))
                                 }
                             }
                         }
@@ -375,7 +382,7 @@ private fun MediaPickerContent(
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("Permission denied", color = MaterialTheme.colorScheme.error)
                                 Button(onClick = { permissionRequested = false }) {
-                                    Text("Retry")
+                                    Text(stringResource(Res.string.retry))
                                 }
                             }
                         }
@@ -454,7 +461,7 @@ private fun MediaPickerContent(
                         OutlinedTextField(
                             value = threadName,
                             onValueChange = { threadName = it },
-                            label = { Text("Thread Name") },
+                            label = { Text(stringResource(Res.string.thread_name)) },
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true
                         )
@@ -465,7 +472,7 @@ private fun MediaPickerContent(
                             },
                             enabled = threadName.isNotBlank()
                         ) {
-                            Text("Create Thread")
+                            Text(stringResource(Res.string.create_thread))
                         }
                     }
                 }

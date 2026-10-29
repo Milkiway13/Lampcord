@@ -1,5 +1,11 @@
 package me.lampu.lampcord.shared.ui.settings
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.cancel
+import me.lampu.lampcord.shared.generated.resources.enable
+import me.lampu.lampcord.shared.generated.resources.lampcord_settings_clear
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -174,9 +180,9 @@ fun AdditionalSettingsContent(
         )
     }
 
-    if (show3y3Confirmation) AlertDialog(onDismissRequest = { show3y3Confirmation = false }, title = { Text("Enable 3y3?") }, text = { Text("Embed customizations in bio?") }, confirmButton = { Button(onClick = { settingsStore.profile3y3 = true; show3y3Confirmation = false }) { Text("Enable") } }, dismissButton = { TextButton(onClick = { show3y3Confirmation = false }) { Text("Cancel") } })
-    if (showUserBgConfirmation) AlertDialog(onDismissRequest = { showUserBgConfirmation = false }, title = { Text("Enable UserBG?") }, text = { Text("See custom banners?") }, confirmButton = { Button(onClick = { settingsStore.userBg = true; showUserBgConfirmation = false }) { Text("Enable") } }, dismissButton = { TextButton(onClick = { showUserBgConfirmation = false }) { Text("Cancel") } })
-    if (showUserPfpConfirmation) AlertDialog(onDismissRequest = { showUserPfpConfirmation = false }, title = { Text("Enable UserPFP?") }, text = { Text("See custom icons?") }, confirmButton = { Button(onClick = { settingsStore.userPfp = true; showUserPfpConfirmation = false }) { Text("Enable") } }, dismissButton = { TextButton(onClick = { showUserPfpConfirmation = false }) { Text("Cancel") } })
+    if (show3y3Confirmation) AlertDialog(onDismissRequest = { show3y3Confirmation = false }, title = { Text("Enable 3y3?") }, text = { Text("Embed customizations in bio?") }, confirmButton = { Button(onClick = { settingsStore.profile3y3 = true; show3y3Confirmation = false }) { Text(stringResource(Res.string.enable)) } }, dismissButton = { TextButton(onClick = { show3y3Confirmation = false }) { Text("Cancel") } })
+    if (showUserBgConfirmation) AlertDialog(onDismissRequest = { showUserBgConfirmation = false }, title = { Text("Enable UserBG?") }, text = { Text("See custom banners?") }, confirmButton = { Button(onClick = { settingsStore.userBg = true; showUserBgConfirmation = false }) { Text(stringResource(Res.string.enable)) } }, dismissButton = { TextButton(onClick = { showUserBgConfirmation = false }) { Text("Cancel") } })
+    if (showUserPfpConfirmation) AlertDialog(onDismissRequest = { showUserPfpConfirmation = false }, title = { Text("Enable UserPFP?") }, text = { Text("See custom icons?") }, confirmButton = { Button(onClick = { settingsStore.userPfp = true; showUserPfpConfirmation = false }) { Text(stringResource(Res.string.enable)) } }, dismissButton = { TextButton(onClick = { showUserPfpConfirmation = false }) { Text("Cancel") } })
 
     if (showClearLoggerConfirmation) {
         AlertDialog(
@@ -187,10 +193,10 @@ fun AdditionalSettingsContent(
                 TextButton(onClick = {
                     showClearLoggerConfirmation = false
                     messageLogger.clearLoggedMessages { showToast("Logged messages cleared") }
-                }) { Text("Clear") }
+                }) { Text(stringResource(Res.string.lampcord_settings_clear)) }
             },
             dismissButton = {
-                TextButton(onClick = { showClearLoggerConfirmation = false }) { Text("Cancel") }
+                TextButton(onClick = { showClearLoggerConfirmation = false }) { Text(stringResource(Res.string.cancel)) }
             }
         )
     }

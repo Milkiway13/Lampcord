@@ -1,5 +1,9 @@
 package me.lampu.lampcord.shared.ui.components.settings
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.back
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -250,7 +254,7 @@ val platform = remember { me.lampu.lampcord.shared.utils.getPlatformName() }
         Column(modifier = modifier.fillMaxWidth()) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(16.dp)) {
                 IconButton(onClick = onNavigateBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.back))
                 }
                 Spacer(Modifier.width(8.dp))
                 Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
@@ -271,7 +275,7 @@ val platform = remember { me.lampu.lampcord.shared.utils.getPlatformName() }
                 title = { Text(title) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

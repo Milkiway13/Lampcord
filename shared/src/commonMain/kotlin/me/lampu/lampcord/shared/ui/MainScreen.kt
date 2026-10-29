@@ -1,5 +1,9 @@
 package me.lampu.lampcord.shared.ui
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.dismiss
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -113,7 +117,7 @@ fun MainScreen(
                     ) {
                         Text(errors.first().message, modifier = Modifier.weight(1f))
                         TextButton(onClick = { errorStore.clear() }) {
-                            Text("Dismiss")
+                            Text(stringResource(Res.string.dismiss))
                         }
                     }
                 }

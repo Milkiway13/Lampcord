@@ -1,5 +1,11 @@
 package me.lampu.lampcord.shared.ui.components.guilds
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.cancel
+import me.lampu.lampcord.shared.generated.resources.join_guild
+import me.lampu.lampcord.shared.generated.resources.join_server_button_cta
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -86,10 +92,10 @@ fun JoinServerDialog(
                     CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp)
                     Spacer(Modifier.width(8.dp))
                 }
-                Text("Join")
+                Text(stringResource(Res.string.join_guild))
             }
         },
-        dismissButton = { TextButton(enabled = !busy, onClick = onDismiss) { Text("Cancel") } }
+        dismissButton = { TextButton(enabled = !busy, onClick = onDismiss) { Text(stringResource(Res.string.cancel)) } }
     )
 }
 
@@ -119,7 +125,7 @@ fun AddServerRailItem(onClick: () -> Unit) {
         ) {
             Icon(
                 imageVector = Icons.Rounded.Add,
-                contentDescription = "Join a server",
+                contentDescription = stringResource(Res.string.join_server_button_cta),
                 modifier = Modifier.size(28.dp)
             )
         }

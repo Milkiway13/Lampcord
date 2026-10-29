@@ -1,6 +1,14 @@
 @file:OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class)
-
 package me.lampu.lampcord.shared.ui.components.chat
+
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.cancel
+import me.lampu.lampcord.shared.generated.resources.create
+import me.lampu.lampcord.shared.generated.resources.delete
+import me.lampu.lampcord.shared.generated.resources.message_action_reply
+import me.lampu.lampcord.shared.generated.resources.retry
+import me.lampu.lampcord.shared.generated.resources.thread_name
+import org.jetbrains.compose.resources.stringResource
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
@@ -410,7 +418,7 @@ fun MessageItem(
         if (swipeProgress > 0f) {
             Icon(
                 imageVector = Icons.Rounded.Reply,
-                contentDescription = "Reply",
+                contentDescription = stringResource(Res.string.message_action_reply),
                 tint = if (swipeProgress >= 1f) MaterialTheme.colorScheme.primary
                 else MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
@@ -813,8 +821,8 @@ fun MessageItem(
                                     ) {
                                         Icon(Icons.Rounded.Error, null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(14.dp))
                                         Text(text = message.sendError, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error)
-                                        Text(text = "Retry", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary, modifier = Modifier.clickableCursor { messageStore.retryMessage(message) })
-                                        Text(text = "Delete", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error, modifier = Modifier.clickableCursor { messageStore.deletePendingMessage(message) })
+                                        Text(text = stringResource(Res.string.retry), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary, modifier = Modifier.clickableCursor { messageStore.retryMessage(message) })
+                                        Text(text = stringResource(Res.string.delete), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error, modifier = Modifier.clickableCursor { messageStore.deletePendingMessage(message) })
                                     }
                                 }
 
@@ -1112,7 +1120,7 @@ fun CreateThreadDialog(
                 TextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Thread Name") },
+                    label = { Text(stringResource(Res.string.thread_name)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
@@ -1124,14 +1132,14 @@ fun CreateThreadDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text("Cancel")
+                        Text(stringResource(Res.string.cancel))
                     }
                     Spacer(Modifier.width(8.dp))
                     Button(
                         onClick = { if (name.isNotBlank()) onConfirm(name) },
                         enabled = name.isNotBlank()
                     ) {
-                        Text("Create")
+                        Text(stringResource(Res.string.create))
                     }
                 }
             }

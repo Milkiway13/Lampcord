@@ -1,5 +1,14 @@
 package me.lampu.lampcord.shared.ui.settings
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.debug
+import me.lampu.lampcord.shared.generated.resources.lampcord_settings_all
+import me.lampu.lampcord.shared.generated.resources.lampcord_settings_all_tags
+import me.lampu.lampcord.shared.generated.resources.lampcord_settings_auto_scroll
+import me.lampu.lampcord.shared.generated.resources.lampcord_settings_debug_logs
+import me.lampu.lampcord.shared.generated.resources.lampcord_settings_search_logs
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -54,7 +63,7 @@ fun DebugLogScreen(onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Debug Logs") },
+                title = { Text(stringResource(Res.string.lampcord_settings_debug_logs)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Rounded.ArrowBack, "Back")
@@ -80,7 +89,7 @@ fun DebugLogScreen(onBack: () -> Unit) {
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
-                    placeholder = { Text("Search logs...") },
+                    placeholder = { Text(stringResource(Res.string.lampcord_settings_search_logs)) },
                     modifier = Modifier.weight(1f),
                     singleLine = true,
                     leadingIcon = { Icon(Icons.Rounded.Search, null) },
@@ -92,7 +101,7 @@ fun DebugLogScreen(onBack: () -> Unit) {
                 FilterChip(
                     selected = autoScroll,
                     onClick = { autoScroll = !autoScroll },
-                    label = { Text("Auto-scroll") }
+                    label = { Text(stringResource(Res.string.lampcord_settings_auto_scroll)) }
                 )
 
                 FilterChip(
@@ -102,7 +111,7 @@ fun DebugLogScreen(onBack: () -> Unit) {
                         Settings.shared.verboseLogging = verboseLogging
                         Logging.debugEnabled = verboseLogging
                     },
-                    label = { Text("Debug") }
+                    label = { Text(stringResource(Res.string.debug)) }
                 )
             }
 
@@ -115,7 +124,7 @@ fun DebugLogScreen(onBack: () -> Unit) {
                     FilterChip(
                         selected = filterLevel == null,
                         onClick = { filterLevel = null },
-                        label = { Text("All") }
+                        label = { Text(stringResource(Res.string.lampcord_settings_all)) }
                     )
                 }
                 items(levels) { level ->
@@ -147,7 +156,7 @@ fun DebugLogScreen(onBack: () -> Unit) {
                         FilterChip(
                             selected = filterTag == null,
                             onClick = { filterTag = null },
-                            label = { Text("All Tags") }
+                            label = { Text(stringResource(Res.string.lampcord_settings_all_tags)) }
                         )
                     }
                     items(tags) { tag ->

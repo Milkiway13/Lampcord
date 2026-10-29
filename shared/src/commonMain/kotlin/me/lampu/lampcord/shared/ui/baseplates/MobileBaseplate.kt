@@ -1,5 +1,17 @@
 package me.lampu.lampcord.shared.ui.baseplates
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.back
+import me.lampu.lampcord.shared.generated.resources.channels
+import me.lampu.lampcord.shared.generated.resources.friends
+import me.lampu.lampcord.shared.generated.resources.home
+import me.lampu.lampcord.shared.generated.resources.lampcord_settings_nav_you
+import me.lampu.lampcord.shared.generated.resources.mentions
+import me.lampu.lampcord.shared.generated.resources.password_manager_open_settings
+import me.lampu.lampcord.shared.generated.resources.pins
+import me.lampu.lampcord.shared.generated.resources.search
+import org.jetbrains.compose.resources.stringResource
+
 import me.lampu.lampcord.shared.api.CdnUrls
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
@@ -417,7 +429,7 @@ fun MobileBaseplate(
                             navigationStore.isSettingsVisible = true
                             navigator.navigate(Screen.Settings)
                         }) {
-                            Text("Open Settings")
+                            Text(stringResource(Res.string.password_manager_open_settings))
                         }
                     }
                 }
@@ -659,7 +671,7 @@ fun MobileBaseplate(
                                     navigator.navigate(Screen.Chat)
                                 },
                                 icon = { Icon(if (currentRoute == Screen.Chat) Icons.Brand.DiscordRounded else Icons.Brand.DiscordRoundedOutline, "Home") },
-                                label = { Text("Home") },
+                                label = { Text(stringResource(Res.string.home)) },
                                 alwaysShowLabel = !settingsStore.hideNavLabels
                             )
                         }
@@ -672,7 +684,7 @@ fun MobileBaseplate(
                                     navigator.navigate(Screen.Friends)
                                 },
                                 icon = { Icon(if (currentRoute == Screen.Friends) Icons.Filled.Person else Icons.Rounded.Person, "Friends") },
-                                label = { Text("Friends") },
+                                label = { Text(stringResource(Res.string.friends)) },
                                 alwaysShowLabel = !settingsStore.hideNavLabels
                             )
                         }
@@ -683,7 +695,7 @@ fun MobileBaseplate(
                                     navigator.navigate(Screen.GlobalSearch)
                                 },
                                 icon = { Icon(Icons.Filled.Search, "Search") },
-                                label = { Text("Search") },
+                                label = { Text(stringResource(Res.string.search)) },
                                 alwaysShowLabel = !settingsStore.hideNavLabels
                             )
                         }
@@ -696,7 +708,7 @@ fun MobileBaseplate(
                                     navigator.navigate(Screen.Mentions)
                                 },
                                 icon = { Icon(Icons.Rounded.AlternateEmail, "Mentions") },
-                                label = { Text("Mentions") },
+                                label = { Text(stringResource(Res.string.mentions)) },
                                 alwaysShowLabel = !settingsStore.hideNavLabels
                             )
                         }
@@ -757,7 +769,7 @@ fun MobileBaseplate(
                                         Icon(Icons.Filled.Settings, "You")
                                     }
                                 },
-                                label = { Text("You") },
+                                label = { Text(stringResource(Res.string.lampcord_settings_nav_you)) },
                                 alwaysShowLabel = !settingsStore.hideNavLabels
                             )
                         }
@@ -1081,7 +1093,7 @@ private fun MainBaseplateContent(
                                         }) {
                                             Icon(
                                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                                contentDescription = "Back"
+                                                contentDescription = stringResource(Res.string.back)
                                             )
                                         }
                                     } else if (isRoles) {
@@ -1090,7 +1102,7 @@ private fun MainBaseplateContent(
                                         }) {
                                             Icon(
                                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                                contentDescription = "Back"
+                                                contentDescription = stringResource(Res.string.back)
                                             )
                                         }
                                     } else if (activeChannel != null && activeChannel.type != 1 && activeChannel.type != 3 && activeChannel.guild_id != null) {
@@ -1118,7 +1130,7 @@ private fun MainBaseplateContent(
                                             Box(modifier = Modifier.size(28.dp)) {
                                                 Icon(
                                                     imageVector = channelIcon,
-                                                    contentDescription = "Channels",
+                                                    contentDescription = stringResource(Res.string.channels),
                                                     modifier = Modifier.fillMaxSize(),
                                                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                                                 )
@@ -1161,7 +1173,7 @@ private fun MainBaseplateContent(
                                         IconButton(onClick = { navigationStore.isSearchVisible = true }) {
                                             Icon(
                                                 imageVector = Icons.Filled.Search,
-                                                contentDescription = "Search",
+                                                contentDescription = stringResource(Res.string.search),
                                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }
@@ -1170,7 +1182,7 @@ private fun MainBaseplateContent(
                                         IconButton(onClick = { navigationStore.isPinsVisible = true }) {
                                             Icon(
                                                 imageVector = Icons.Filled.PushPin,
-                                                contentDescription = "Pins",
+                                                contentDescription = stringResource(Res.string.pins),
                                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }

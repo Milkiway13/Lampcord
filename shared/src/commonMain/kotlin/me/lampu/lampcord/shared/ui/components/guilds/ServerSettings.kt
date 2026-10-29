@@ -1,5 +1,9 @@
 package me.lampu.lampcord.shared.ui.components.guilds
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.server_settings
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -170,7 +174,7 @@ fun ServerSettings(
                 Scaffold(
                     topBar = {
                         TopAppBar(
-                            title = { Text("Server Settings") },
+                            title = { Text(stringResource(Res.string.server_settings)) },
                             navigationIcon = {
                                 IconButton(onClick = onDismiss) {
                                     Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")

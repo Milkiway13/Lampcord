@@ -1,5 +1,16 @@
 package me.lampu.lampcord.shared.ui
 
+import me.lampu.lampcord.shared.generated.resources.accessibility
+import me.lampu.lampcord.shared.generated.resources.account
+import me.lampu.lampcord.shared.generated.resources.appearance
+import me.lampu.lampcord.shared.generated.resources.connections
+import me.lampu.lampcord.shared.generated.resources.guild_template_name_category_chat
+import me.lampu.lampcord.shared.generated.resources.lampcord_settings_advanced
+import me.lampu.lampcord.shared.generated.resources.language
+import me.lampu.lampcord.shared.generated.resources.notifications
+import me.lampu.lampcord.shared.generated.resources.privacy_and_safety
+import me.lampu.lampcord.shared.generated.resources.voice_and_video
+
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -397,7 +408,7 @@ fun SettingsScreen(
                                         items = listOf(
                                             Material3SettingsItem(
                                                 if (useRounded) Icons.Rounded.AccountCircle else Icons.Filled.AccountCircle,
-                                                title = { Text("Account") },
+                                                title = { Text(stringResource(Res.string.account)) },
                                                 description = { Text("Manage your account details and security") },
                                                 onClick = onNavigateToAccount
                                             ),
@@ -409,13 +420,13 @@ fun SettingsScreen(
                                             ),
                                             Material3SettingsItem(
                                                 if (useRounded) Icons.Rounded.Security else Icons.Filled.Security,
-                                                title = { Text("Privacy & Safety") },
+                                                title = { Text(stringResource(Res.string.privacy_and_safety)) },
                                                 description = { Text("Manage who can contact you and what you see") },
                                                 onClick = onNavigateToPrivacy
                                             ),
                                             Material3SettingsItem(
                                                 if (useRounded) Icons.Rounded.Link else Icons.Filled.Link,
-                                                title = { Text("Connections") },
+                                                title = { Text(stringResource(Res.string.connections)) },
                                                 description = { Text("Connect your accounts from other platforms") },
                                                 onClick = onNavigateToConnections
                                             ),
@@ -435,43 +446,43 @@ fun SettingsScreen(
                                         items = listOf(
                                             Material3SettingsItem(
                                                 if (useRounded) Icons.Rounded.Palette else Icons.Filled.Palette,
-                                                title = { Text("Appearance") },
+                                                title = { Text(stringResource(Res.string.appearance)) },
                                                 description = { Text("Theme, colors, and message display") },
                                                 onClick = onNavigateToAppearance
                                             ),
                                             Material3SettingsItem(
                                                 if (useRounded) Icons.Rounded.Accessibility else Icons.Filled.Accessibility,
-                                                title = { Text("Accessibility") },
+                                                title = { Text(stringResource(Res.string.accessibility)) },
                                                 description = { Text("Visual and interactive adjustments") },
                                                 onClick = onNavigateToAccessibility
                                             ),
                                             Material3SettingsItem(
                                                 if (useRounded) Icons.Rounded.Language else Icons.Filled.Language,
-                                                title = { Text("Language") },
+                                                title = { Text(stringResource(Res.string.language)) },
                                                 description = { Text(stringResource(Res.string.lampcord_language_description)) },
                                                 onClick = onNavigateToLanguage
                                             ),
                                             Material3SettingsItem(
                                                 if (useRounded) Icons.Rounded.Mic else Icons.Filled.Mic,
-                                                title = { Text("Voice & Video") },
+                                                title = { Text(stringResource(Res.string.voice_and_video)) },
                                                 description = { Text("Input, output, and camera settings") },
                                                 onClick = { /* TODO */ }
                                             ),
                                             Material3SettingsItem(
                                                 if (useRounded) Icons.Rounded.Forum else Icons.Filled.Forum,
-                                                title = { Text("Chat") },
+                                                title = { Text(stringResource(Res.string.guild_template_name_category_chat)) },
                                                 description = { Text("Control how you interact with chat and media") },
                                                 onClick = onNavigateToChat
                                             ),
                                             Material3SettingsItem(
                                                 if (useRounded) Icons.Rounded.Notifications else Icons.Filled.Notifications,
-                                                title = { Text("Notifications") },
+                                                title = { Text(stringResource(Res.string.notifications)) },
                                                 description = { Text("Control how you're notified") },
                                                 onClick = onNavigateToNotifications
                                             ),
                                             Material3SettingsItem(
                                                 if (useRounded) Icons.Rounded.Tune else Icons.Filled.Tune,
-                                                title = { Text("Advanced") },
+                                                title = { Text(stringResource(Res.string.lampcord_settings_advanced)) },
                                                 description = { Text("Developer settings and experimental features") },
                                                 onClick = onNavigateToAdvanced
                                             ),

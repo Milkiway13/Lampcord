@@ -1,5 +1,9 @@
 package me.lampu.lampcord.shared.ui.components
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.cancel
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -89,7 +93,7 @@ fun CropImageDialog(
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text("Cancel", color = Color.White)
+                        Text(stringResource(Res.string.cancel), color = Color.White)
                     }
                     Button(onClick = {
                         onConfirm(imageBytes)

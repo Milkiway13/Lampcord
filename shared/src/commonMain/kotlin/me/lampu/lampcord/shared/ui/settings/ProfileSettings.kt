@@ -1,5 +1,12 @@
 package me.lampu.lampcord.shared.ui.settings
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.cancel
+import me.lampu.lampcord.shared.generated.resources.close
+import me.lampu.lampcord.shared.generated.resources.save_changes
+import me.lampu.lampcord.shared.generated.resources.user_popout_about_me
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -204,7 +211,7 @@ fun ProfileSettingsContent(
                 }
             },
             confirmButton = {
-                TextButton(onClick = { showRecentAvatars = false }) { Text("Close") }
+                TextButton(onClick = { showRecentAvatars = false }) { Text(stringResource(Res.string.close)) }
             }
         )
     }
@@ -352,7 +359,7 @@ fun ProfileSettingsContent(
                     }
                 }
             },
-            confirmButton = { TextButton(onClick = { showGuildPicker = false }) { Text("Cancel") } }
+            confirmButton = { TextButton(onClick = { showGuildPicker = false }) { Text(stringResource(Res.string.cancel)) } }
         )
     }
 
@@ -612,7 +619,7 @@ fun ProfileSettingsContent(
                                 },
                                 modifier = Modifier.fillMaxWidth(),
                                 shape = CircleShape
-                            ) { Text("Save Changes") }
+                            ) { Text(stringResource(Res.string.save_changes)) }
                         }
                     }
                 }
@@ -633,7 +640,7 @@ fun ProfileSettingsContent(
                                             OutlinedTextField(value = displayName, onValueChange = { displayName = it }, label = { Text(if (selectedGuildId == null) "Display Name" else "Server Nickname") }, modifier = Modifier.fillMaxWidth())
                                             if (selectedGuildId == null) {
                                                 OutlinedTextField(value = pronouns, onValueChange = { pronouns = it }, label = { Text("Pronouns") }, modifier = Modifier.fillMaxWidth())
-                                                OutlinedTextField(value = bio, onValueChange = { bio = it }, label = { Text("About Me") }, modifier = Modifier.fillMaxWidth(), minLines = 3)
+                                                OutlinedTextField(value = bio, onValueChange = { bio = it }, label = { Text(stringResource(Res.string.user_popout_about_me)) }, modifier = Modifier.fillMaxWidth(), minLines = 3)
                                             }
                                         }
                                     }

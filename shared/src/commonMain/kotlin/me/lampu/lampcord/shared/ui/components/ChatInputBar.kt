@@ -1,5 +1,10 @@
 package me.lampu.lampcord.shared.ui.components
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.add
+import me.lampu.lampcord.shared.generated.resources.send
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -588,7 +593,7 @@ fun ChatInputBar(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Filled.Add,
-                                        contentDescription = "Add",
+                                        contentDescription = stringResource(Res.string.add),
                                         modifier = Modifier.size(iconSize)
                                     )
                                 }
@@ -950,7 +955,7 @@ if (it.selection.collapsed) {
                                     ) {
                                         Icon(
                                             imageVector = Icons.Rounded.Send,
-                                            contentDescription = "Send",
+                                            contentDescription = stringResource(Res.string.send),
                                             modifier = Modifier.size(iconSize)
                                         )
                                     }

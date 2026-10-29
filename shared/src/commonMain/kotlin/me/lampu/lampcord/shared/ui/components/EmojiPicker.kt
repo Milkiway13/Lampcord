@@ -1,6 +1,11 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class, kotlin.ExperimentalStdlibApi::class)
-
 package me.lampu.lampcord.shared.ui.components
+
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.emoji
+import me.lampu.lampcord.shared.generated.resources.expression_picker_gif
+import me.lampu.lampcord.shared.generated.resources.expression_picker_sticker
+import org.jetbrains.compose.resources.stringResource
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.EnterTransition
@@ -292,7 +297,7 @@ fun EmojiPicker(
                             unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant
                         ) {
                             Box(Modifier.padding(12.dp)) {
-                                Text("Emoji", style = MaterialTheme.typography.labelLarge, fontWeight = if (selectedTab == 0) FontWeight.Bold else FontWeight.Normal)
+                                Text(stringResource(Res.string.emoji), style = MaterialTheme.typography.labelLarge, fontWeight = if (selectedTab == 0) FontWeight.Bold else FontWeight.Normal)
                             }
                         }
                         Tab(
@@ -302,7 +307,7 @@ fun EmojiPicker(
                             unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant
                         ) {
                             Box(Modifier.padding(12.dp)) {
-                                Text("GIFs", style = MaterialTheme.typography.labelLarge, fontWeight = if (selectedTab == 1) FontWeight.Bold else FontWeight.Normal)
+                                Text(stringResource(Res.string.expression_picker_gif), style = MaterialTheme.typography.labelLarge, fontWeight = if (selectedTab == 1) FontWeight.Bold else FontWeight.Normal)
                             }
                         }
                         Tab(
@@ -312,7 +317,7 @@ fun EmojiPicker(
                             unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant
                         ) {
                             Box(Modifier.padding(12.dp)) {
-                                Text("Stickers", style = MaterialTheme.typography.labelLarge, fontWeight = if (selectedTab == 2) FontWeight.Bold else FontWeight.Normal)
+                                Text(stringResource(Res.string.expression_picker_sticker), style = MaterialTheme.typography.labelLarge, fontWeight = if (selectedTab == 2) FontWeight.Bold else FontWeight.Normal)
                             }
                         }
                     }

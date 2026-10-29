@@ -1,5 +1,9 @@
 package me.lampu.lampcord.shared.ui.components
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.emoji_category_recent
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -364,7 +368,7 @@ private fun StickerServerBar(
                         if (group.id == "frequent") {
                             Icon(
                                 imageVector = Icons.Filled.History,
-                                contentDescription = "Frequently Used",
+                                contentDescription = stringResource(Res.string.emoji_category_recent),
                                 modifier = Modifier.size(20.dp),
                                 tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                             )

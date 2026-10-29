@@ -1,5 +1,9 @@
 package me.lampu.lampcord.shared.ui.components.guilds
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.home
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -200,7 +204,7 @@ fun GuildRail(
                         ) {
                             Icon(
                                 imageVector = Icons.Brand.DiscordRounded,
-                                contentDescription = "Home",
+                                contentDescription = stringResource(Res.string.home),
                                 modifier = Modifier.size(28.dp)
                             )
                         }

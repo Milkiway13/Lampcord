@@ -1,5 +1,11 @@
 package me.lampu.lampcord.shared.ui.components
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.cancel
+import me.lampu.lampcord.shared.generated.resources.title
+import me.lampu.lampcord.shared.generated.resources.user_profile_message
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -221,7 +227,7 @@ fun NewPostDialog(
                 TextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = { Text("Title") },
+                    label = { Text(stringResource(Res.string.title)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     enabled = !isLoading
@@ -232,7 +238,7 @@ fun NewPostDialog(
                 TextField(
                     value = content,
                     onValueChange = { content = it },
-                    label = { Text("Message") },
+                    label = { Text(stringResource(Res.string.user_profile_message)) },
                     modifier = Modifier.fillMaxWidth().heightIn(min = 100.dp),
                     enabled = !isLoading
                 )
@@ -266,7 +272,7 @@ fun NewPostDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     androidx.compose.material3.TextButton(onClick = onDismiss, enabled = !isLoading) {
-                        Text("Cancel")
+                        Text(stringResource(Res.string.cancel))
                     }
                     Spacer(Modifier.width(8.dp))
                     Button(

@@ -1,5 +1,12 @@
 package me.lampu.lampcord.shared.ui.components.guilds
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.copy_id
+import me.lampu.lampcord.shared.generated.resources.leave_server
+import me.lampu.lampcord.shared.generated.resources.mark_as_read
+import me.lampu.lampcord.shared.generated.resources.roles
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -321,7 +328,7 @@ fun ServerBottomSheet(
                 Material3SettingsGroup(
                     items = listOf(
                         Material3SettingsItem(
-                            title = { Text("Mark As Read", fontWeight = FontWeight.Bold) },
+                            title = { Text(stringResource(Res.string.mark_as_read), fontWeight = FontWeight.Bold) },
                             onClick = {
                                 guildStore.markGuildAsRead(guild.id)
                                 onDismiss()
@@ -379,7 +386,7 @@ fun ServerBottomSheet(
                         ),
 
                         Material3SettingsItem(
-                            title = { Text("Roles") },
+                            title = { Text(stringResource(Res.string.roles)) },
                             onClick = { /* TODO: show roles sheet */ }
                         ),
 
@@ -387,7 +394,7 @@ fun ServerBottomSheet(
                         hideMutedItem,
 
                         Material3SettingsItem(
-                            title = { Text("Leave Server", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold) },
+                            title = { Text(stringResource(Res.string.leave_server), color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold) },
                             onClick = {
                                 showLeaveDialog = true
                             }
@@ -400,7 +407,7 @@ fun ServerBottomSheet(
                     Material3SettingsGroup(
                         items = listOf(
                             Material3SettingsItem(
-                                title = { Text("Copy ID") },
+                                title = { Text(stringResource(Res.string.copy_id)) },
                                 onClick = {
                                     setClipboardText(guild.id)
                                     onDismiss()

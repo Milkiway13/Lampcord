@@ -1,5 +1,11 @@
 package me.lampu.lampcord.shared.ui.components.profiles
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.manage_user
+import me.lampu.lampcord.shared.generated.resources.mutual_friends
+import me.lampu.lampcord.shared.generated.resources.mutual_guilds
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -198,7 +204,7 @@ fun ProfileSections(
                         shape = CircleShape,
                         contentPadding = PaddingValues(horizontal = 12.dp)
                     ) {
-                        Text("Manage User", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Medium)
+                        Text(stringResource(Res.string.manage_user), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Medium)
                     }
                     if (showManageRoles) {
                         ManageRolesSheet(profile = profile, guild = guild, onDismiss = { showManageRoles = false })
@@ -222,7 +228,7 @@ fun ProfileSections(
                                         icon = Icons.Rounded.Person,
                                         iconTint = profileTextColor,
                                         containerColor = theme.cardColor.copy(alpha = 0.3f),
-                                        title = { Text("Mutual Friends", color = profileTextColor) },
+                                        title = { Text(stringResource(Res.string.mutual_friends), color = profileTextColor) },
                                         description = { Text("$mutualFriendsCount Mutual Friends", color = profileSecondaryTextColor) },
                                         onClick = { showMutualFriends = true }
                                     )
@@ -235,7 +241,7 @@ fun ProfileSections(
                                         icon = Icons.Rounded.Group,
                                         iconTint = profileTextColor,
                                         containerColor = theme.cardColor.copy(alpha = 0.3f),
-                                        title = { Text("Mutual Servers", color = profileTextColor) },
+                                        title = { Text(stringResource(Res.string.mutual_guilds), color = profileTextColor) },
                                         description = { Text("${guilds.size} Mutual Servers", color = profileSecondaryTextColor) },
                                         onClick = { showMutualServers = true }
                                     )

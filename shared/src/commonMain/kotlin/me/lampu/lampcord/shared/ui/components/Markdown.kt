@@ -1,5 +1,9 @@
 package me.lampu.lampcord.shared.ui.components
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.copy_link
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
@@ -363,7 +367,7 @@ fun DiscordMarkdownText(
                             setClipboardText(url)
                             showToast("Copied link")
                             contextMenuUrl = null
-                        }) { Text("Copy Link") }
+                        }) { Text(stringResource(Res.string.copy_link)) }
                     },
                     dismissButton = {
                         TextButton(onClick = {
@@ -395,7 +399,7 @@ fun DiscordMarkdownText(
                             )
                             DropdownMenuItem(
                                 modifier = Modifier.handCursor(),
-                                text = { Text("Copy Link") },
+                                text = { Text(stringResource(Res.string.copy_link)) },
                                 onClick = {
                                     setClipboardText(url)
                                     showToast("Copied link")

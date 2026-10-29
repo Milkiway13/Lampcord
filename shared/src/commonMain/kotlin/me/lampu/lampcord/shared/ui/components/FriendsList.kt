@@ -1,5 +1,16 @@
 package me.lampu.lampcord.shared.ui.components
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.add_friend
+import me.lampu.lampcord.shared.generated.resources.add_friend_add_manually
+import me.lampu.lampcord.shared.generated.resources.back
+import me.lampu.lampcord.shared.generated.resources.cancel
+import me.lampu.lampcord.shared.generated.resources.friend_request_accept
+import me.lampu.lampcord.shared.generated.resources.friend_request_ignore
+import me.lampu.lampcord.shared.generated.resources.friends
+import me.lampu.lampcord.shared.generated.resources.unblock
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -89,10 +100,10 @@ fun FriendsList(
         topBar = {
             Column {
                 LargeTopAppBar(
-                    title = { Text("Friends") },
+                    title = { Text(stringResource(Res.string.friends)) },
                     navigationIcon = {
                         IconButton(onClick = { navigationStore.isFriendsSelected = false }) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.back))
                         }
                     },
                     actions = {
@@ -241,7 +252,7 @@ fun FriendItem(
             when (relationshipType) {
                 2 -> {
                     TextButton(onClick = { relationshipStore.unblockUser(user.id) }) {
-                        Text("Unblock")
+                        Text(stringResource(Res.string.unblock))
                     }
                 }
                 3 -> {
@@ -249,16 +260,16 @@ fun FriendItem(
                         onClick = { relationshipStore.addFriend(user.id) },
                         shape = RoundedCornerShape(16.dp)
                     ) {
-                        Text("Accept")
+                        Text(stringResource(Res.string.friend_request_accept))
                     }
                     Spacer(Modifier.width(8.dp))
                     TextButton(onClick = { relationshipStore.removeFriend(user.id) }) {
-                        Text("Ignore")
+                        Text(stringResource(Res.string.friend_request_ignore))
                     }
                 }
                 4 -> {
                     TextButton(onClick = { relationshipStore.removeFriend(user.id) }) {
-                        Text("Cancel")
+                        Text(stringResource(Res.string.cancel))
                     }
                 }
                 else -> {
@@ -298,10 +309,10 @@ private fun AddFriendPage(onBack: () -> Unit) {
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             TopAppBar(
-                title = { Text("Add Friend") },
+                title = { Text(stringResource(Res.string.add_friend)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.back))
                     }
                 }
             )
@@ -354,7 +365,7 @@ fun AddFriendUI(relationshipStore: RelationshipStore = koinInject()) {
                     modifier = Modifier.padding(end = 8.dp),
                     shape = RoundedCornerShape(16.dp)
                 ) {
-                    Text("Send Friend Request")
+                    Text(stringResource(Res.string.add_friend_add_manually))
                 }
             }
         )

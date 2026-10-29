@@ -1,5 +1,15 @@
 package me.lampu.lampcord.shared.ui.components.profiles
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.add_friend
+import me.lampu.lampcord.shared.generated.resources.block
+import me.lampu.lampcord.shared.generated.resources.cancel
+import me.lampu.lampcord.shared.generated.resources.nickname
+import me.lampu.lampcord.shared.generated.resources.remove_friend
+import me.lampu.lampcord.shared.generated.resources.save
+import me.lampu.lampcord.shared.generated.resources.user_settings_profile_banner
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -131,7 +141,7 @@ fun ProfileBanner(
             if (bannerUrl != null) {
                 AsyncImage(
                     model = bannerUrl,
-                    contentDescription = "Profile Banner",
+                    contentDescription = stringResource(Res.string.user_settings_profile_banner),
                     contentScale = contentScale,
                     modifier = Modifier.fillMaxSize(),
                     filterQuality = FilterQuality.Medium,
@@ -179,7 +189,7 @@ fun ProfileBanner(
                     OutlinedTextField(
                         value = nickname,
                         onValueChange = { nickname = it },
-                        label = { Text("Nickname") },
+                        label = { Text(stringResource(Res.string.nickname)) },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true
                     )
@@ -189,12 +199,12 @@ fun ProfileBanner(
                         relationshipStore.updateNickname(user.id, nickname.takeIf { it.isNotBlank() })
                         showNicknameDialog = false
                     }) {
-                        Text("Save")
+                        Text(stringResource(Res.string.save))
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showNicknameDialog = false }) {
-                        Text("Cancel")
+                        Text(stringResource(Res.string.cancel))
                     }
                 }
             )
@@ -232,7 +242,7 @@ fun ProfileBanner(
                     if (isFriend) {
                         DropdownMenuItem(
                             modifier = Modifier.handCursor(),
-                            text = { Text("Remove Friend") },
+                            text = { Text(stringResource(Res.string.remove_friend)) },
                             onClick = {
                                 relationshipStore.removeFriend(user.id)
                                 menuExpanded = false
@@ -251,7 +261,7 @@ fun ProfileBanner(
                     } else if (!isBlocked) {
                         DropdownMenuItem(
                             modifier = Modifier.handCursor(),
-                            text = { Text("Add Friend") },
+                            text = { Text(stringResource(Res.string.add_friend)) },
                             onClick = {
                                 relationshipStore.addFriend(user.id)
                                 menuExpanded = false
@@ -264,7 +274,7 @@ fun ProfileBanner(
 
                     DropdownMenuItem(
                         modifier = Modifier.handCursor(),
-                        text = { Text("Block", color = MaterialTheme.colorScheme.error) },
+                        text = { Text(stringResource(Res.string.block), color = MaterialTheme.colorScheme.error) },
                         onClick = {
                             relationshipStore.blockUser(user.id)
                             menuExpanded = false

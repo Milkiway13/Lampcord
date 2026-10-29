@@ -1,5 +1,10 @@
 package me.lampu.lampcord.shared.ui.components
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.cancel
+import me.lampu.lampcord.shared.generated.resources.join_voice
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -442,7 +447,7 @@ fun VoiceJoinSheet(
             ) {
                 Icon(Icons.Filled.Call, null)
                 Spacer(Modifier.width(8.dp))
-                Text("Join Voice")
+                Text(stringResource(Res.string.join_voice))
             }
             
             Spacer(Modifier.height(8.dp))
@@ -451,7 +456,7 @@ fun VoiceJoinSheet(
                 onClick = onDismiss,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Cancel")
+                Text(stringResource(Res.string.cancel))
             }
             
             Spacer(Modifier.navigationBarsPadding())

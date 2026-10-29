@@ -1,5 +1,9 @@
 package me.lampu.lampcord.shared.ui.components
 
+import me.lampu.lampcord.shared.generated.resources.Res
+import me.lampu.lampcord.shared.generated.resources.back
+import org.jetbrains.compose.resources.stringResource
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -87,7 +91,7 @@ fun ThreadPanel(
                 }) {
                     Icon(
                         imageVector = if (isMobile) Icons.AutoMirrored.Filled.ArrowBack else Icons.Filled.Close,
-                        contentDescription = "Back"
+                        contentDescription = stringResource(Res.string.back)
                     )
                 }
                 Spacer(Modifier.width(8.dp))
