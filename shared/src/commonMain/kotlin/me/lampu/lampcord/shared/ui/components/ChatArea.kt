@@ -253,8 +253,9 @@ fun ChatArea(
                 .toSet()
         }
 
-        val filteredMessages = remember(messages, blockedAuthorIds) {
-            if (me.lampu.lampcord.shared.settings.Settings.shared.hideBlockedMessages) {
+        val hideBlockedMessages = me.lampu.lampcord.shared.settings.Settings.shared.hideBlockedMessages
+        val filteredMessages = remember(messages, blockedAuthorIds, hideBlockedMessages) {
+            if (hideBlockedMessages) {
                 messages.filter { msg -> msg.author?.id?.let { it !in blockedAuthorIds } ?: true }
             } else messages
         }

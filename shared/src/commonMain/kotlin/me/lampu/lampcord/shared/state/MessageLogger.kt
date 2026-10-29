@@ -12,7 +12,7 @@ import me.lampu.lampcord.shared.model.Message
 import me.lampu.lampcord.shared.utils.getCurrentTimeMillis
 import kotlin.time.Instant
 
-private const val LOG_RETENTION_MILLIS = 30L * 24 * 60 * 60 * 1000
+private const val LOG_RETENTION_MILLIS = 90L * 24 * 60 * 60 * 1000
 
 class MessageLogger(
     private val json: Json,

@@ -31,7 +31,7 @@ the REST request and the local preference write.
 
 ## Database
 
-The message log has a composite `(channelId, timestamp)` index and a 30-day retention pass.
+The message log has a composite `(channelId, timestamp)` index and a 90-day retention pass.
 Queries and JSON decoding run on IO or Default.
 
 Remaining: transactional batch inserts, offline message cache, and a storage settings page.
